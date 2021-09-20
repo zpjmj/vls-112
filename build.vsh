@@ -1,0 +1,5 @@
+pwd:=getwd()
+cmd_path:=join_path(pwd,'cmd','')
+vls_112_source_path := join_path(cmd_path,'vls-112.v')
+vls_112_exec_path := join_path(pwd,'vls-112')
+system(@VEXE + ' "$vls_112_source_path" -o "$vls_112_exec_path"')

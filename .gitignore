@@ -1,0 +1,8 @@
+# Binaries for programs and plugins
+main
+vls_112
+*.exe
+*.exe~
+*.so
+*.dylib
+*.dll
