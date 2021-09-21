@@ -8,8 +8,6 @@ import vlsio
 fn C._setmode(int, int)
 
 fn main() {
-	os.write_file(r'D:\GIT\vls-112\debug.txt','xxx') or {panic('write filed')}
-
 	$if windows {
 		// 0x8000 = _O_BINARY from <fcntl.h>
 		// windows replaces \n => \r\n, so \r\n will be replaced to \r\r\n
@@ -32,6 +30,11 @@ fn main() {
 			description: "Toggles language server's debug mode."
 		},
 		cli.Flag{
+			flag: .int
+			name: 'loglv'
+			description: "Toggles language server's debug mode."
+		},
+		cli.Flag{
 			flag: .bool
 			name: 'socket'
 			description: 'Listens and communicates to the server through a TCP socket.'
@@ -49,6 +52,7 @@ fn main() {
 
 fn parse_cli(cmd cli.Command) ? {
 	debug_mode := cmd.flags.get_bool('debug') or { false }
+	loglv := cmd.flags.get_int('loglv') or { 0 }
 	//socket_mode := cmd.flags.get_bool('socket') or { false }
 	//socket_port := cmd.flags.get_int('port') or { '5008' }
 
@@ -61,6 +65,7 @@ fn parse_cli(cmd cli.Command) ? {
 
 	mut io := server.ReceiveSender(vlsio.Stdio{ debug: debug_mode })
 
-	mut ls := server.new(io)
+	mut ls := server.new(io,loglv)
+
 	ls.start_parse_loop()
 }
