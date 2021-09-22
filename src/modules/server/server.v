@@ -33,7 +33,7 @@ pub fn new(io ReceiveSender,loglv int) Vls112 {
 		logger:log.new_logger(io.debug,loglv)
 	}
 
-	vls_112.logger.text('============= vls-112 start =============',0) or {vls_112.exit()}
+	vls_112.logger.text('============= vls-112 start =============',0) or {vls_112.exit(1,err)}
 
 	return vls_112
 }
@@ -48,11 +48,11 @@ pub fn (mut ls Vls112) start_parse_loop() {
 
 	for {
 		payload := ls.io.receive() or { continue }
-		ls.dispatch(payload)
+		ls.dispatch(payload) or {ls.exit(1,err)}
 	}
 }
 
-fn (mut ls Vls112) dispatch(payload string){
+fn (mut ls Vls112) dispatch(payload string)?{
 	request := json.decode(jsonrpc.Request, payload) or {
 		ls.send(new_error(jsonrpc.parse_error, ''))
 		return
@@ -62,17 +62,17 @@ fn (mut ls Vls112) dispatch(payload string){
 		match request.method {
 			'initialized' {}
 			'shutdown' {
-				ls.exit()
+				ls.exit(0)
 			}
 			else {}
 		}
 	} else {
 		match request.method {
 			'exit' {
-				ls.exit()
+				ls.exit(0)
 			}
 			'initialize' {
-				ls.initialize(request.id, request.params)
+				ls.initialize(request.id, request.params)?
 			}
 			else {
 				err_type := if ls.status == .shutdown {
@@ -85,12 +85,17 @@ fn (mut ls Vls112) dispatch(payload string){
 		}
 	}
 
-	ls.logger.info('new msg -->',0) or {ls.exit()}
-	ls.logger.text(request,0,'\t') or {ls.exit()}
+	ls.logger.info('new msg -->',0)?
+	ls.logger.text(request,0,'\t')?
 }
 
-fn (mut ls Vls112) exit(){
-	ls.logger.text('============== vls-112 end ==============',0) or {exit(1)}
+fn (mut ls Vls112) exit(exit_code int,vls_error ...IError){
+	if exit_code != 0 {
+		ls.logger.error('-->',0) or {exit(exit_code)}
+		ls.logger.text(vls_error[0],0,'\t') or {exit(exit_code)}
+	}
+
+	ls.logger.text('============== vls-112 end ==============',0) or {exit(exit_code)}
 	ls.logger.close()
-	exit(int(ls.status != .shutdown))
+	exit(exit_code)
 }
