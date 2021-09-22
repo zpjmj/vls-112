@@ -6,3 +6,4 @@ vls_112
 *.so
 *.dylib
 *.dll
+test.json
