@@ -3,6 +3,7 @@ module server
 import jsonrpc
 import log
 import json
+import lsp
 
 interface ReceiveSender {
 	debug bool
@@ -18,11 +19,19 @@ pub enum ServerStatus {
 }
 
 struct Vls112 {
+	//储存log 信息输出等级
 	loglv int
 mut:
+	//log输出用对象
 	logger log.Logger
+	//保存server状态
 	status ServerStatus = .off
+	//保存客户端rootpath
+	root_path string
+	//服务端提供那些能力
+	capabilities lsp.ServerCapabilities
 pub:
+	//io流对象用于与客户端传递信息
 	io ReceiveSender
 }
 
@@ -54,15 +63,21 @@ pub fn (mut ls Vls112) start_parse_loop() {
 
 fn (mut ls Vls112) dispatch(payload string)?{
 	request := json.decode(jsonrpc.Request, payload) or {
-		ls.send(new_error(jsonrpc.parse_error, ''))
+		ls.send(new_error(jsonrpc.parse_error, ''))?
 		return
 	}
+
+	ls.logger.info('new request -->',0)?
+	ls.logger.text(request,0,'\t')?
 
 	if ls.status == .initialized {
 		match request.method {
 			'initialized' {}
 			'shutdown' {
 				ls.exit(0)
+			}
+			'textDocument/definition' {
+				ls.definition(request.id, request.params)?
 			}
 			else {}
 		}
@@ -80,13 +95,10 @@ fn (mut ls Vls112) dispatch(payload string)?{
 				} else {
 					jsonrpc.server_not_initialized
 				}
-				ls.send(new_error(err_type, request.id))
+				ls.send(new_error(err_type, request.id))?
 			}
 		}
 	}
-
-	ls.logger.info('new msg -->',0)?
-	ls.logger.text(request,0,'\t')?
 }
 
 fn (mut ls Vls112) exit(exit_code int,vls_error ...IError){

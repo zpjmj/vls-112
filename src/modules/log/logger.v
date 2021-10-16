@@ -7,6 +7,7 @@ struct Logger{
 	debug bool     //debug模式flg
 	loglv int      //保存cli参数传入的log的输出级别 默认为0
 mut:
+	log_path string
 	file os.File   //输出的log文件
 	info_no int    //no号
 	warning_no int //no号
@@ -33,6 +34,7 @@ pub fn new_logger(debug bool,loglv int) Logger{
 		debug:debug
 		file:file
 		loglv:loglv
+		log_path:fpath
 	}
 
 	return logger
@@ -50,9 +52,18 @@ pub fn (mut l Logger) changfolder(folder_path string)?{
 	}
 
 	log_path:=os.join_path(folder_path,'vls-112-debug.log')
+
+	if os.exists(log_path) {
+		os.rm(log_path)?
+	}
+
+	//tmplog关闭
+	l.file.close()
+
+	os.mv(l.log_path,log_path)?
 	file:=os.open_append(log_path)?
-	l.close()
 	l.file = file
+	l.log_path = log_path
 }
 
 //info 打印info param{msg:输出内容 loglv:log的输出级别}

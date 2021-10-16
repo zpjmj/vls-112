@@ -2,7 +2,6 @@ module server
 
 import jsonrpc
 import json
-import strings
 
 struct ShowMessageParams {
 	@type MessageType
@@ -33,22 +32,10 @@ fn (mut ls Vls112) show_message(m string,mlv MessageType){
 	})
 }
 
-fn (mut ls Vls112) send<T>(resp jsonrpc.Response<T>) {
-	mut resp_wr := strings.new_builder(100)
-	defer { unsafe { resp_wr.free() } }
-	resp_wr.write_string('{"jsonrpc":"${jsonrpc.version}","id":${resp.id}')
-	if resp.id.len == 0 {
-		resp_wr.write_string('null')
-	}
-	if resp.error.code != 0 {
-		err := json.encode(resp.error)
-		resp_wr.write_string(',"error":${err}')
-	} else {
-		res := json.encode(resp.result)
-		resp_wr.write_string(',"result":${res}')
-	}
-	resp_wr.write_b(`}`)
-	str := resp_wr.str()
+fn (mut ls Vls112) send<T>(resp jsonrpc.Response<T>)? {
+	str := resp.json()
+	ls.logger.info('new response -->',0)?
+	ls.logger.text(str,0,'\t')?
 	ls.io.send(str)
 }
 
@@ -58,4 +45,14 @@ fn new_error(code int, id string) jsonrpc.Response<string> {
 		id: id
 		error: jsonrpc.new_response_error(code)
 	}
+}
+
+[inline]
+fn uri_to_path(uri string) string{
+	$if windows {
+		if uri.contains('%3A') {
+			return uri.all_after('file:///').replace_each(['/', '\\', '%3A', ':'])
+		}
+	}
+	return if uri.starts_with('file://') { uri.all_after('file://') } else { '' }
 }
