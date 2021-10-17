@@ -16,6 +16,8 @@ pub enum Symboltype{
 	basic
 	//组合
 	composite
+	//子组合
+	sub_composite
 }
 
 //符号
@@ -42,6 +44,10 @@ pub:
 pub struct Range{
 	start int
 	end int
+	start_line int
+	start_character int
+	end_line int
+	end_character int
 }
 
 //基本符号 不可分割的最小元素
@@ -93,6 +99,16 @@ mut:
 	can_continue FuncSymbolBool [required]
 	//当前匹配函数index
 	match_fn_index int [required]
+}
+
+//子组合符号
+pub struct SubCompositeSymbol{
+	//组合符号定义
+	composite_symbol CompositeSymbol
+	//依赖那些组合符号
+	parent []string
+	//父类scope index
+	scope_index map[string][]int  //空数组表示全范围
 }
 
 pub fn (s Symbol) get_text() string{

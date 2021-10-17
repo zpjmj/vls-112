@@ -35,7 +35,7 @@ fn print_composite_symbol_type(all_symbol []sym.Symbol){
 	
 	for i,s in all_symbol{
 
-		if s.typ == .composite{
+		if s.typ == .composite || s.typ == .sub_composite{
 			print(s.name)
 			print(' ')
 			if (i+1)%10 == 0 {
@@ -48,13 +48,15 @@ fn print_composite_symbol_type(all_symbol []sym.Symbol){
 	print('\n')
 }
 
-
 fn main(){
 	mut context := sym.new_context()
 	mut runtime := sym.new_runtime(&context)
 	mut basic_symbol_priority_level := []string{}
 	mut composite_symbol_priority_level := []string{}
+	mut sub_composite_symbol_priority_level := []string{}
 	mut match_fn_arr := []sym.FuncSymbolBool{}
+	mut scope_index_map := map[string][]int{}
+	mut parent := []string{}
 
 	define01 := context.new_basic_symbol_define(basic_start_01,basic_end_01,basic_continue_01,false,0,false)
 	context.def_basic_symbol('ws',define01) or {panic(err)}
@@ -171,6 +173,10 @@ fn main(){
 	define_c07 := context.new_composite_symbol_define(composite_start_import,match_fn_arr)
 	context.def_composite_symbol('{}import_molule',define_c07) or {panic(err)}
 
+	match_fn_arr=[ws_1,name_1,import_molule_continue_02]
+	define_c08 := context.new_composite_symbol_define(composite_start_module,match_fn_arr)
+	context.def_composite_symbol('{}module_decl',define_c08) or {panic(err)}
+
 	composite_symbol_priority_level << '{}pub_fn'
 	composite_symbol_priority_level << '{}fn'
 	composite_symbol_priority_level << '{}pub_method'
@@ -178,24 +184,42 @@ fn main(){
 	composite_symbol_priority_level << '{}pub_struct'
 	composite_symbol_priority_level << '{}struct'
 	composite_symbol_priority_level << '{}import_molule'
-
+	composite_symbol_priority_level << '{}module_decl'
 	context.composite_symbol_priority_level_push(composite_symbol_priority_level) or {panic(err)}
+
+	/*
+	* sub_composite_symbol
+	*/
+	parent = []string{}
+	parent << '{}pub_fn'
+	parent << '{}fn'
+	parent << '{}pub_method'
+	parent << '{}method'
+	parent << '()fn'
+	scope_index_map = map[string][]int{}
+	scope_index_map['{}pub_fn'] = [0,1]
+	scope_index_map['{}fn'] = [0,1]
+	scope_index_map['{}pub_method'] = [1,2]
+	scope_index_map['{}method'] = [1,2]
+	scope_index_map['()fn'] = [0]
+	match_fn_arr=[fn_dot_0,fn_name_1,ws_0,lpar_1,rpar_2_end]
+	define_sc01 := context.new_composite_symbol_define(sub_composite_start_name,match_fn_arr)
+	context.def_sub_composite_symbol('()fn',define_sc01,parent,scope_index_map) or {panic(err)}
+
+	sub_composite_symbol_priority_level << '()fn'
+	context.sub_composite_symbol_priority_level_push(sub_composite_symbol_priority_level) or {panic(err)}
+
 
 	runtime.file_path = os.join_path(os.getwd(),'testf.v')
 	runtime.parse_basic_symbol() or {panic(err)}
 	runtime.parse_composite_symbol() or {panic(err)}
+	runtime.parse_sub_composite_symbol() or {panic(err)}
 
-	//println(runtime.all_basic_symbol)
+	println(runtime.all_basic_symbol)
 	println('============================================')
 	println(runtime.all_composite_symbol)
 	print_basic_symbol_type(runtime.all_basic_symbol)
 	print_composite_symbol_type(runtime.all_composite_symbol)
-
-
-	// match_fn_arr=[ws_1,name_1,ws_0,lcbr_2,rcbr_2]
-	// define_c06 := context.new_composite_symbol_define(composite_start_struct,match_fn_arr)
-	// context.def_composite_symbol('()fn',define_c06,['{}pub_fn','{}fn']) or {panic(err)}
-
 }
 
 //===========================================================================
@@ -543,6 +567,14 @@ fn composite_start_import(input sym.Symbol)bool{
 	return false
 }
 
+//module
+fn composite_start_module(input sym.Symbol)bool{
+	if input.name == 'module'{
+		return true
+	}
+	return false
+}
+
 //================================================
 //composite match common function
 fn ws_1(input sym.Symbol,tier int,mut scope_index_arr []int)(bool,int,int,int){
@@ -661,4 +693,45 @@ fn import_molule_continue_02(input sym.Symbol,tier int,mut scope_index_arr []int
 	}
 	
 	return true,0,1,0
+}
+
+//====================================================================
+//()fn
+fn sub_composite_start_name(input sym.Symbol)bool{
+	if input.name == 'name'{
+		return true
+	}
+	return false
+}
+
+fn fn_dot_0(input sym.Symbol,tier int,mut scope_index_arr []int)(bool,int,int,int){
+	if input.name == '.'{
+		return true,1,1,0
+	}
+	return true,0,2,0
+}
+
+fn fn_name_1(input sym.Symbol,tier int,mut scope_index_arr []int)(bool,int,int,int){
+	if input.name == 'name'{
+		return true,1,-1,0
+	}
+	return false,0,0,0
+}
+
+fn rpar_2_end(input sym.Symbol,tier int,mut scope_index_arr []int)(bool,int,int,int){
+	mut tmp_tier := tier
+
+	if input.name == '('{
+		return true,1,0,tmp_tier++
+	}
+
+	if input.name == ')'{
+		tmp_tier--
+		if tmp_tier == 0{
+			scope_index_arr << input.start_index
+			return false,0,0,0
+		}
+	}
+
+	return true,1,0,tmp_tier
 }

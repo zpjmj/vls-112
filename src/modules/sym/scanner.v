@@ -7,35 +7,54 @@ fn log<T>(msg T){
 
 struct ScannerState{
 mut:
+	//第几个字
 	word_pos int
+	//第几个byte
 	byte_pos int
+	//第几行
+	line int
+	//本行开始之前一共有多少个字
+	prev_line_word_pos int
+	//本行开始之前一共有多少byte
+	prev_line_byte_pos int
+	//是否结束
 	is_end bool
 }
 
 struct Scanner{
 	text string
 mut:
+	//第几个字
 	word_pos int
+	//第几个byte
 	byte_pos int
+	//第几行
+	line int
+	//本行开始之前一共有多少个字
+	prev_line_word_pos int
+	//本行开始之前一共有多少byte
+	prev_line_byte_pos int
+	//是否结束
 	is_end bool
+	//pushd popd 保存和还原状态
 	stack []ScannerState
+	//上一个状态
 	prev_state ScannerState
 }
 
 fn new_scanner(text string)Scanner{
 	return Scanner{
 		text:text
-		word_pos:0
-		byte_pos:0
-		is_end:false
 		stack:[]ScannerState{cap:1}
-		prev_state:ScannerState{}
 	}
 }
 
 fn (mut s Scanner) scan()?[]byte{
 	s.prev_state.word_pos = s.word_pos
 	s.prev_state.byte_pos = s.byte_pos
+	s.prev_state.line = s.line
+	s.prev_state.prev_line_word_pos = s.prev_line_word_pos
+	s.prev_state.prev_line_byte_pos = s.prev_line_byte_pos
 	s.prev_state.is_end = s.is_end
 
 	if s.byte_pos >= s.text.len{
@@ -68,6 +87,13 @@ fn (mut s Scanner) get_utf8_word()?[]byte{
 	if first_bit == 0b0 {
 		s.byte_pos++
 		s.word_pos++
+
+		if str[pos] == `\n`{
+			s.line++
+			s.prev_line_word_pos = s.word_pos
+			s.prev_line_byte_pos = s.byte_pos
+		}
+
 		return [str[pos]]
 	}
 
@@ -124,6 +150,9 @@ fn (mut s Scanner) pushd(){
 	s.stack << ScannerState{
 		word_pos:s.word_pos
 		byte_pos:s.byte_pos
+		line:s.line
+		prev_line_word_pos:s.prev_line_word_pos
+		prev_line_byte_pos:s.prev_line_byte_pos
 		is_end:s.is_end
 	}
 }
@@ -132,6 +161,9 @@ fn (mut s Scanner) popd(){
 	stack := s.stack.pop()
 	s.word_pos = stack.word_pos
 	s.byte_pos = stack.byte_pos
+	s.line = stack.line
+	s.prev_line_word_pos = stack.prev_line_word_pos
+	s.prev_line_byte_pos = stack.prev_line_byte_pos
 	s.is_end = stack.is_end
 }
 
@@ -142,9 +174,11 @@ fn (mut s Scanner) clean_stack(){
 	}
 }
 
-
 fn (mut s Scanner) prev_scan(){
 	s.word_pos = s.prev_state.word_pos
 	s.byte_pos = s.prev_state.byte_pos
+	s.line = s.prev_state.line
+	s.prev_line_word_pos = s.prev_state.prev_line_word_pos
+	s.prev_line_byte_pos = s.prev_state.prev_line_byte_pos
 	s.is_end = s.prev_state.is_end
 }
