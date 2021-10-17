@@ -1,4 +1,4 @@
-module symboldb
+module sym
 
 struct SymbolIndex{
 	typ Symboltype

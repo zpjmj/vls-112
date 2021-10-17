@@ -1,10 +1,12 @@
-module symboldb
-//符号规约库
+module sym
+//符号规约
 
 pub const scan_end = byte(0b0)
 
-//符号判断函数 
-pub type FuncSymbolBool = fn(Symbol,int)(bool,int,int,int)  //flg symbol_step match_fn_step tier
+//符号判断函数
+//input: basic_symbol,tier,scope_index_arr
+//output: flg symbol_step match_fn_step tier
+pub type FuncSymbolBool = fn(Symbol,int,mut []int)(bool,int,int,int)
 pub type FuncByteBool = fn([]byte)bool
 
 pub enum Symboltype{
@@ -23,12 +25,17 @@ pub:
 	name string
 	//类型
 	typ Symboltype
+	//扫描器引用
+	scanner &Scanner
 	//文字范围
 	text_range Range
 	//字节范围
 	byte_range Range
-	////自定义属性
-	//user_def_attr map[string]string
+	//all_basic_symbol数组中的索引 end_index只对组合符号有意义
+	start_index int
+	end_index int
+	//闭合符号的开始结束index数组 () [] {}
+	scope []int
 }
 
 //范围 左闭右开
@@ -88,3 +95,6 @@ mut:
 	match_fn_index int [required]
 }
 
+pub fn (s Symbol) get_text() string{
+	return s.scanner.text[s.byte_range.start..s.byte_range.end]
+}

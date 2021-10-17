@@ -1,4 +1,4 @@
-module symboldb
+module sym
 
 import os
 
@@ -9,13 +9,15 @@ pub mut:
 	//当前的context
 	context &Context
 	//所有待解析的文件路径数组
-	all_file []string
+	file_path string
 	//所有待解析的字符串
-	all_buff []string
-	//所有的符号
-	all_symbol []Symbol
-	//基本符号个数
-	basic_symbol_len int
+	buff string
+	//所有基本符号
+	all_basic_symbol []Symbol
+	//所有组合符号
+	all_composite_symbol []Symbol
+	//扫描器对象
+	scanner Scanner
 }
 
 pub fn new_runtime(c &Context) Runtime{
@@ -24,26 +26,21 @@ pub fn new_runtime(c &Context) Runtime{
 	}
 }
 
-//开始解析
-pub fn (mut r Runtime) parse()?{
-	mut buff := []string{}
-	buff << r.all_buff
+//开始解析基本符号
+pub fn (mut r Runtime) parse_basic_symbol()?{
+	mut buff := r.buff
 
-	for path in r.all_file{
-		buff << os.read_file(path)?
+	if buff.len == 0{
+		buff = os.read_file(r.file_path)?
 	}
 
-	for text in buff{
-		mut scanner := new_scanner(text)
-		r.parse_basic_symbol(mut &scanner)?
-		r.parse_composite_symbol() or {
-			continue
-		}
-	}
+	r.scanner = new_scanner(buff)
+
+	r.parse_basic_symbol__()?
 }
-
-fn (mut r Runtime) parse_basic_symbol(mut scanner &Scanner)?{
+fn (mut r Runtime) parse_basic_symbol__()?{
 	unsafe{
+		mut scanner := &r.scanner
 		mut undefine_start:=false
 		mut undefine_start_word_pos:=0
 		mut undefine_start_byte_pos:=0
@@ -66,6 +63,7 @@ fn (mut r Runtime) parse_basic_symbol(mut scanner &Scanner)?{
 				basic_symbol_define := basic_symbol.define
 				
 				if basic_symbol_define.is_start(word){
+					scanner.clean_stack()
 					if basic_symbol_define.is_fixed_length{
 						if basic_symbol_define.len > 1 {
 							mut after_word := []byte{}
@@ -87,9 +85,10 @@ fn (mut r Runtime) parse_basic_symbol(mut scanner &Scanner)?{
 						}
 
 						if undefine_start{
-							r.all_symbol << Symbol{
+							r.all_basic_symbol << Symbol{
 								name:''
 								typ:.undefined
+								scanner:scanner
 								text_range:Range{
 									start:undefine_start_word_pos
 									end:start_word_pos
@@ -98,13 +97,15 @@ fn (mut r Runtime) parse_basic_symbol(mut scanner &Scanner)?{
 									start:undefine_start_byte_pos
 									end:start_byte_pos
 								}
+								start_index:r.all_basic_symbol.len
 							}
 							undefine_start = false
 						}
 
-						r.all_symbol << Symbol{
+						r.all_basic_symbol << Symbol{
 							name:basic_symbol.name
 							typ:.basic
+							scanner:scanner
 							text_range:Range{
 								start:start_word_pos
 								end:scanner.word_pos
@@ -113,6 +114,7 @@ fn (mut r Runtime) parse_basic_symbol(mut scanner &Scanner)?{
 								start:start_byte_pos
 								end:scanner.byte_pos
 							}
+							start_index:r.all_basic_symbol.len
 						}
 						goto next
 					}else{
@@ -141,9 +143,10 @@ fn (mut r Runtime) parse_basic_symbol(mut scanner &Scanner)?{
 						scanner.prev_scan()
 						if basic_symbol_define.is_end(after_word){
 							if undefine_start{
-								r.all_symbol << Symbol{
+								r.all_basic_symbol << Symbol{
 									name:''
 									typ:.undefined
+									scanner:scanner
 									text_range:Range{
 										start:undefine_start_word_pos
 										end:start_word_pos
@@ -152,13 +155,15 @@ fn (mut r Runtime) parse_basic_symbol(mut scanner &Scanner)?{
 										start:undefine_start_byte_pos
 										end:start_byte_pos
 									}
+									start_index:r.all_basic_symbol.len
 								}
 								undefine_start = false
 							}
 
-							r.all_symbol << Symbol{
+							r.all_basic_symbol << Symbol{
 								name:basic_symbol.name
 								typ:.basic
+								scanner:scanner
 								text_range:Range{
 									start:start_word_pos
 									end:scanner.word_pos
@@ -167,13 +172,15 @@ fn (mut r Runtime) parse_basic_symbol(mut scanner &Scanner)?{
 									start:start_byte_pos
 									end:scanner.byte_pos
 								}
+								start_index:r.all_basic_symbol.len
 							}
 							goto next
 						}else{
 							if undefine_start{
-								r.all_symbol << Symbol{
+								r.all_basic_symbol << Symbol{
 									name:''
 									typ:.undefined
+									scanner:scanner
 									text_range:Range{
 										start:undefine_start_word_pos
 										end:scanner.word_pos
@@ -182,12 +189,14 @@ fn (mut r Runtime) parse_basic_symbol(mut scanner &Scanner)?{
 										start:undefine_start_byte_pos
 										end:scanner.byte_pos
 									}
+									start_index:r.all_basic_symbol.len
 								}
 								undefine_start = false
 							}else{
-								r.all_symbol << Symbol{
+								r.all_basic_symbol << Symbol{
 									name:''
 									typ:.undefined
+									scanner:scanner
 									text_range:Range{
 										start:start_word_pos
 										end:scanner.word_pos
@@ -196,6 +205,7 @@ fn (mut r Runtime) parse_basic_symbol(mut scanner &Scanner)?{
 										start:start_byte_pos
 										end:scanner.byte_pos
 									}
+									start_index:r.all_basic_symbol.len
 								}
 							}
 							goto next
@@ -210,16 +220,22 @@ fn (mut r Runtime) parse_basic_symbol(mut scanner &Scanner)?{
 				undefine_start = true
 			}
 		}
+		scanner.clean_stack()
 	}
+
 }
 
-//组合符号匹配
-fn (mut r Runtime) parse_composite_symbol()?{
-	len := r.all_symbol.len
-	r.basic_symbol_len = len
+//开始解析组合符号
+pub fn (mut r Runtime) parse_composite_symbol()?{
+	r.parse_composite_symbol__() or {
+		return
+	}
+}
+fn (mut r Runtime) parse_composite_symbol__()?{
+	len := r.all_basic_symbol.len
 
 	for index := 0;index < len;index++{
-		basic_symbol := r.all_symbol[index]?
+		basic_symbol := r.all_basic_symbol[index]?
 	
 		for composite_symbol_index in r.context.composite_symbol_priority_level{
 			composite_symbol := &r.context.all_composite_symbol[composite_symbol_index]
@@ -230,10 +246,11 @@ fn (mut r Runtime) parse_composite_symbol()?{
 				mut next_index := index + 1
 				mut match_flg := false
 				mut tier := 0
+				mut scope_index_arr := []int{}
 
 				for {
-					next_basic_symbol = r.all_symbol[next_index]?
-					flg,symbol_step,match_fn_step,tier_tmp := composite_symbol_define.can_continue(next_basic_symbol,tier)	
+					next_basic_symbol = r.all_basic_symbol[next_index]?
+					flg,symbol_step,match_fn_step,tier_tmp := composite_symbol_define.can_continue(next_basic_symbol,tier,mut scope_index_arr)	
 					tier = tier_tmp
 
 					if flg && symbol_step == 0 && match_fn_step==0{
@@ -263,9 +280,10 @@ fn (mut r Runtime) parse_composite_symbol()?{
 				}
 
 				if match_flg{
-					r.all_symbol << Symbol{
+					r.all_composite_symbol << Symbol{
 						name:composite_symbol.name
 						typ:.composite
+						scanner:basic_symbol.scanner
 						text_range:Range{
 							start:basic_symbol.text_range.start
 							end:next_basic_symbol.text_range.end
@@ -274,6 +292,9 @@ fn (mut r Runtime) parse_composite_symbol()?{
 							start:basic_symbol.byte_range.start
 							end:next_basic_symbol.byte_range.end
 						}
+						start_index:index
+						end_index:next_index
+						scope:scope_index_arr
 					}
 					index = next_index
 				}
@@ -281,8 +302,3 @@ fn (mut r Runtime) parse_composite_symbol()?{
 		}
 	}
 }
-
-// //查找符号
-// pub fn (mut r Runtime) search(name string) []Symbol{
-
-// }

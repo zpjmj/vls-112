@@ -1,7 +1,7 @@
-/*as*/
-//asdfasfd
+import os { user_os } import os { user_os }
 
-'adfsadf'
-"asdfasdf\"
-
-"'asdfsdf'
+fn (mut s Scanner) prev_scan(){
+}
+import time as t { Time, now, utc }
+fn (mut s Scanner) prev_scan(){
+}

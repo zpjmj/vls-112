@@ -1,4 +1,4 @@
-module symboldb
+module sym
 
 [if debug]
 fn log<T>(msg T){
@@ -134,6 +134,14 @@ fn (mut s Scanner) popd(){
 	s.byte_pos = stack.byte_pos
 	s.is_end = stack.is_end
 }
+
+fn (mut s Scanner) clean_stack(){
+	l := s.stack.len
+	for i:=0;i<l;i++{
+		s.stack.pop()
+	}
+}
+
 
 fn (mut s Scanner) prev_scan(){
 	s.word_pos = s.prev_state.word_pos
