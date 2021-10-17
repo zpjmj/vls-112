@@ -7,21 +7,42 @@ const (
 	all_ws=[byte(32),byte(9),byte(10),byte(11),byte(12),byte(13)]  //空白字符
 )
 
-fn print_symbol_type(all_symbol []symboldb.Symbol){
+fn print_basic_symbol_type(all_symbol []symboldb.Symbol){
 	println('')
-	println('====================================================')
+	println('BASIC:========================================================')
+	
+	for i,s in all_symbol{
+		if s.typ != .composite{
+			if s.typ == .undefined{
+				print('undefined')
+			}else{
+				print(s.name)
+			}
+			print(' ')
+			if (i+1)%10 == 0 {
+				print('\n')
+			} 
+		}
+
+	}
+	print('\n')
+	print('\n')
+}
+
+fn print_composite_symbol_type(all_symbol []symboldb.Symbol){
+	println('')
+	println('COMPOSITE:====================================================')
 	
 	for i,s in all_symbol{
 
-		if s.name == ''{
-			print('undefined')
-		}else{
+		if s.typ == .composite{
 			print(s.name)
-		}	
-		print(' ')
-		if (i+1)%10 == 0 {
-			print('\n')
-		} 
+			print(' ')
+			if (i+1)%10 == 0 {
+				print('\n')
+			} 
+		}
+
 	}
 	print('\n')
 	print('\n')
@@ -33,6 +54,7 @@ fn main(){
 	mut runtime := symboldb.new_runtime(&context)
 	mut basic_symbol_priority_level := []string{}
 	mut composite_symbol_priority_level := []string{}
+	mut match_fn_arr := []symboldb.FuncSymbolBool{}
 
 	define01 := context.new_basic_symbol_define(basic_start_01,basic_end_01,basic_continue_01,false,0,false)
 	context.def_basic_symbol('ws',define01) or {panic(err)}
@@ -100,45 +122,50 @@ fn main(){
 	basic_symbol_priority_level << 'string_double_quotes'
 	context.basic_symbol_priority_level_push(basic_symbol_priority_level) or {panic(err)}
 
-	// context.def_composite_symbol('imp module')
-	// context.def_composite_symbol('pub Function')
-	// context.def_composite_symbol('pub method')
-	// context.def_composite_symbol('pub struct')
-	// context.def_composite_symbol('fn')
-	// context.def_composite_symbol('method')
-	// context.def_composite_symbol('struct')
-	// context.def_composite_symbol('var decl')
+	/*
+	* match fn 命名
+	* 基本符号名 + _ + flg
+	* flg分类 ：0非必须  1必须有一个 2期待一个
+	*/
+	match_fn_arr=[ws_1,fn_1,ws_1,name_1,ws_0,lpar_1,rpar_2,lcbr_2,rcbr_2]
+	define_c01 := context.new_composite_symbol_define(composite_start_pub,match_fn_arr)
+	context.def_composite_symbol('{}pub_fn',define_c01) or {panic(err)}
 
-	mut match_fn_arr := []symboldb.FuncSymbolBool{}
+	match_fn_arr=[ws_1,name_1,ws_0,lpar_1,rpar_2,lcbr_2,rcbr_2]
+	define_c02 := context.new_composite_symbol_define(composite_start_fn,match_fn_arr)
+	context.def_composite_symbol('{}fn',define_c02) or {panic(err)}
 
-	match_fn_arr=[step01_01,step01_02,step01_03,step01_04,step01_05,step01_06,step01_07,step01_08,step01_09]
-	define_c01 := context.new_composite_symbol_define(composite_start_01,match_fn_arr)
-	context.def_composite_symbol('pub_fn{}',define_c01) or {panic(err)}
+	match_fn_arr=[ws_1,fn_1,ws_0,lpar_1,rpar_2,ws_0,name_1,ws_0,lpar_1,rpar_2,lcbr_2,rcbr_2]
+	define_c03 := context.new_composite_symbol_define(composite_start_pub,match_fn_arr)
+	context.def_composite_symbol('{}pub_method',define_c03) or {panic(err)}
 
-	match_fn_arr=[step01_03,step01_04,step01_05,step01_06,step01_07,step01_08,step01_09]
-	define_c02 := context.new_composite_symbol_define(composite_start_02,match_fn_arr)
-	context.def_composite_symbol('fn{}',define_c02) or {panic(err)}
+	match_fn_arr=[ws_0,lpar_1,rpar_2,ws_0,name_1,ws_0,lpar_1,rpar_2,lcbr_2,rcbr_2]
+	define_c04 := context.new_composite_symbol_define(composite_start_fn,match_fn_arr)
+	context.def_composite_symbol('{}method',define_c04) or {panic(err)}
 
-	match_fn_arr=[step01_01,step01_02,step01_05,step01_06,step01_07,step01_05,step01_04,step01_05,step01_06,step01_07,step01_08,step01_09]
-	define_c03 := context.new_composite_symbol_define(composite_start_01,match_fn_arr)
-	context.def_composite_symbol('pub_method{}',define_c03) or {panic(err)}
+	match_fn_arr=[ws_1,struct_1,ws_1,name_1,ws_0,lcbr_2,rcbr_2]
+	define_c05 := context.new_composite_symbol_define(composite_start_pub,match_fn_arr)
+	context.def_composite_symbol('{}pub_struct',define_c05) or {panic(err)}
 
-	match_fn_arr=[step01_05,step01_06,step01_07,step01_05,step01_04,step01_05,step01_06,step01_07,step01_08,step01_09]
-	define_c04 := context.new_composite_symbol_define(composite_start_02,match_fn_arr)
-	context.def_composite_symbol('method{}',define_c04) or {panic(err)}
+	match_fn_arr=[ws_1,name_1,ws_0,lcbr_2,rcbr_2]
+	define_c06 := context.new_composite_symbol_define(composite_start_struct,match_fn_arr)
+	context.def_composite_symbol('{}struct',define_c06) or {panic(err)}
 
-	composite_symbol_priority_level << 'pub_fn{}'
-	composite_symbol_priority_level << 'fn{}'
-	composite_symbol_priority_level << 'pub_method{}'
-	composite_symbol_priority_level << 'method{}'
+	composite_symbol_priority_level << '{}pub_fn'
+	composite_symbol_priority_level << '{}fn'
+	composite_symbol_priority_level << '{}pub_method'
+	composite_symbol_priority_level << '{}method'
+	composite_symbol_priority_level << '{}pub_struct'
+	composite_symbol_priority_level << '{}struct'
 
 	context.composite_symbol_priority_level_push(composite_symbol_priority_level) or {panic(err)}
 
 	runtime.all_file << os.join_path(os.getwd(),'testf.v')
 	runtime.parse() or {panic(err)}
 
-	println(runtime.all_symbol)
-	print_symbol_type(runtime.all_symbol)
+	//println(runtime.all_symbol)
+	print_basic_symbol_type(runtime.all_symbol)
+	print_composite_symbol_type(runtime.all_symbol)
 }
 
 fn empty_fn_symbol(input symboldb.Symbol)bool{
@@ -425,56 +452,74 @@ fn basic_continue_16(input []byte)bool{
 
 //====================================================================
 //pub fn
-fn composite_start_01(input symboldb.Symbol)bool{
+fn composite_start_pub(input symboldb.Symbol)bool{
 	if input.name == 'pub'{
 		return true
 	}
 	return false
 }
 
-fn step01_01(input symboldb.Symbol,tier int)(bool,int,int,int){
+//fn
+fn composite_start_fn(input symboldb.Symbol)bool{
+	if input.name == 'fn'{
+		return true
+	}
+	return false
+}
+
+//struct
+fn composite_start_struct(input symboldb.Symbol)bool{
+	if input.name == 'struct'{
+		return true
+	}
+	return false
+}
+
+//================================================
+//composite match common function
+fn ws_1(input symboldb.Symbol,tier int)(bool,int,int,int){
 	if input.name == 'ws'{
 		return true,1,1,0
 	}
 	return false,0,0,0
 }
 
-fn step01_02(input symboldb.Symbol,tier int)(bool,int,int,int){
+fn fn_1(input symboldb.Symbol,tier int)(bool,int,int,int){
 	if input.name == 'fn'{
 		return true,1,1,0
 	}
 	return false,0,0,0
 }
 
-fn step01_03(input symboldb.Symbol,tier int)(bool,int,int,int){
-	if input.name == 'ws'{
+fn struct_1(input symboldb.Symbol,tier int)(bool,int,int,int){
+	if input.name == 'struct'{
 		return true,1,1,0
 	}
 	return false,0,0,0
 }
 
-fn step01_04(input symboldb.Symbol,tier int)(bool,int,int,int){
+fn name_1(input symboldb.Symbol,tier int)(bool,int,int,int){
 	if input.name == 'name'{
 		return true,1,1,0
 	}
 	return false,0,0,0
 }
 
-fn step01_05(input symboldb.Symbol,tier int)(bool,int,int,int){
+fn ws_0(input symboldb.Symbol,tier int)(bool,int,int,int){
 	if input.name == 'ws'{
 		return true,1,1,0
 	}
 	return true,0,1,0
 }
 
-fn step01_06(input symboldb.Symbol,tier int)(bool,int,int,int){
+fn lpar_1(input symboldb.Symbol,tier int)(bool,int,int,int){
 	if input.name == '('{
 		return true,1,1,1
 	}
 	return false,0,0,0
 }
 
-fn step01_07(input symboldb.Symbol,tier int)(bool,int,int,int){
+fn rpar_2(input symboldb.Symbol,tier int)(bool,int,int,int){
 	mut tmp_tier := tier
 
 	if input.name == '('{
@@ -491,7 +536,7 @@ fn step01_07(input symboldb.Symbol,tier int)(bool,int,int,int){
 	return true,1,0,tmp_tier
 }
 
-fn step01_08(input symboldb.Symbol,tier int)(bool,int,int,int){
+fn lcbr_2(input symboldb.Symbol,tier int)(bool,int,int,int){
 	if input.name == '{'{
 		return true,1,1,1
 	}
@@ -499,7 +544,7 @@ fn step01_08(input symboldb.Symbol,tier int)(bool,int,int,int){
 	return true,1,0,0
 }
 
-fn step01_09(input symboldb.Symbol,tier int)(bool,int,int,int){
+fn rcbr_2(input symboldb.Symbol,tier int)(bool,int,int,int){
 	mut tmp_tier := tier
 
 	if input.name == '{'{
@@ -514,12 +559,4 @@ fn step01_09(input symboldb.Symbol,tier int)(bool,int,int,int){
 	}
 
 	return true,1,0,tmp_tier
-}
-
-//fn
-fn composite_start_02(input symboldb.Symbol)bool{
-	if input.name == 'fn'{
-		return true
-	}
-	return false
 }

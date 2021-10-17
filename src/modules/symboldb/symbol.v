@@ -27,6 +27,8 @@ pub:
 	text_range Range
 	//字节范围
 	byte_range Range
+	////自定义属性
+	//user_def_attr map[string]string
 }
 
 //范围 左闭右开
