@@ -7,7 +7,7 @@ struct SymbolIndex{
 
 //上下文提供内部定义变量
 [heap]
-struct Context{
+pub struct Context{
 mut:
 	//保存所有基本符号定义
 	all_basic_symbol []BasicSymbol

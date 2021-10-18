@@ -42,6 +42,7 @@ pub:
 
 //范围 左闭右开
 pub struct Range{
+pub:
 	start int
 	end int
 	start_line int
@@ -113,4 +114,11 @@ pub struct SubCompositeSymbol{
 
 pub fn (s Symbol) get_text() string{
 	return s.scanner.text[s.byte_range.start..s.byte_range.end]
+}
+
+pub fn new_empty_symbol()Symbol{
+	scanner := new_scanner('')
+	return Symbol{
+		scanner:&scanner
+	}
 }

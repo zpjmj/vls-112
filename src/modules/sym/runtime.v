@@ -1,10 +1,11 @@
 module sym
 
 import os
+import strings
 
 //运行时提供运行时必须的外部环境
 [heap]
-struct Runtime{
+pub struct Runtime{
 pub mut:
 	//当前的context
 	context &Context
@@ -19,6 +20,58 @@ pub mut:
 	//扫描器对象
 	scanner Scanner
 }
+
+pub fn (mut r Runtime) basic_symbol_type_str() string{
+	mut all_symbol := r.all_basic_symbol
+	mut sb := strings.new_builder(1000)
+	sb.write_string('\n')
+	sb.write_string('BASIC:========================================================\n')
+	
+	for i,s in all_symbol{
+		if s.typ != .composite{
+			if s.typ == .undefined{
+				sb.write_string('undefined')
+			}else{
+				sb.write_string(s.name)
+			}
+			sb.write_string(' ')
+			if (i+1)%10 == 0 {
+				sb.write_string('\n')
+			} 
+		}
+
+	}
+	sb.write_string('\n')
+	sb.write_string('\n')
+	res := sb.str()
+	unsafe { sb.free() }
+	return res
+}
+
+pub fn (mut r Runtime) composite_symbol_type_str() string{
+	mut all_symbol := r.all_composite_symbol
+	mut sb := strings.new_builder(1000)
+	sb.write_string('\n')
+	sb.write_string('COMPOSITE:====================================================\n')
+
+	for i,s in all_symbol{
+
+		if s.typ == .composite || s.typ == .sub_composite{
+			sb.write_string(s.name)
+			sb.write_string(' ')
+			if (i+1)%10 == 0 {
+				sb.write_string('\n')
+			} 
+		}
+
+	}
+	sb.write_string('\n')
+	sb.write_string('\n')
+	res := sb.str()
+	unsafe { sb.free() }
+	return res
+}
+
 
 pub fn new_runtime(c &Context) Runtime{
 	return Runtime{

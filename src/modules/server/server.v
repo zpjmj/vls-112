@@ -30,6 +30,8 @@ mut:
 	root_path string
 	//服务端提供那些能力
 	capabilities lsp.ServerCapabilities
+	//符号db
+	symboldb Symboldb
 pub:
 	//io流对象用于与客户端传递信息
 	io ReceiveSender
@@ -40,6 +42,7 @@ pub fn new(io ReceiveSender,loglv int) Vls112 {
 		io:io
 		loglv:loglv
 		logger:log.new_logger(io.debug,loglv)
+		symboldb:new_symboldb()
 	}
 
 	vls_112.logger.text('============= vls-112 start =============',0) or {vls_112.exit(1,err)}
