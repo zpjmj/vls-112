@@ -24,6 +24,9 @@ fn (mut ls Vls112) initialize(id string, params string)?{
 		return err
 	}
 
+	//初始化符号库
+	ls.symboldb = new_symboldb(ls.root_path,ls.vexe)
+
 	ls.capabilities = lsp.ServerCapabilities{
 		//text_document_sync: .incremental
 		//text_document_sync:.full

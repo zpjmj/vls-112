@@ -30,7 +30,7 @@ fn main() {
 			description: "Toggles language server's debug mode."
 		},
 		cli.Flag{
-			flag: .int
+			flag: .string
 			name: 'loglv'
 			description: "Toggles language server's debug mode."
 		},
@@ -43,6 +43,11 @@ fn main() {
 			flag: .string
 			name: 'port'
 			description: 'Port to use for socket communication. (Default: 5008)'
+		},
+		cli.Flag{
+			flag: .string
+			name: 'vexe'
+			description: 'Default: VEXE: ' + @VEXE
 		}
 	])
 
@@ -52,7 +57,19 @@ fn main() {
 
 fn parse_cli(cmd cli.Command) ? {
 	debug_mode := cmd.flags.get_bool('debug') or { false }
-	loglv := cmd.flags.get_int('loglv') or { 0 }
+	default_loglv := '1000000000'
+	mut loglv := cmd.flags.get_string('loglv') or { default_loglv }
+	mut vexe := cmd.flags.get_string('vexe') or { @VEXE }
+	if vexe.trim_space() == ''{
+		vexe = @VEXE
+	}
+
+	if loglv.len >= default_loglv.len || loglv == '' {
+		loglv = default_loglv
+	}else{
+		loglv = (loglv + '0000000000')[0..10]
+	}
+
 	//socket_mode := cmd.flags.get_bool('socket') or { false }
 	//socket_port := cmd.flags.get_int('port') or { '5008' }
 
@@ -65,7 +82,7 @@ fn parse_cli(cmd cli.Command) ? {
 
 	mut io := server.ReceiveSender(vlsio.Stdio{ debug: debug_mode })
 
-	mut ls := server.new(io,loglv)
+	mut ls := server.new(io,loglv,vexe)
 
 	ls.start_parse_loop()
 }

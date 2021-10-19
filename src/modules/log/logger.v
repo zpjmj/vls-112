@@ -5,7 +5,7 @@ import os
 //Logger 输出log都通过此struct的实例
 struct Logger{
 	debug bool     //debug模式flg
-	loglv int      //保存cli参数传入的log的输出级别 默认为0
+	loglv string      //保存cli参数传入的log的输出级别 默认为0
 mut:
 	log_path string
 	file os.File   //输出的log文件
@@ -15,7 +15,7 @@ mut:
 }
 
 //new_logger 创建logger param{debug:是否为debug模式 loglv:log的输出级别}
-pub fn new_logger(debug bool,loglv int) Logger{
+pub fn new_logger(debug bool,loglv string) Logger{
 	tmp_dir := os.join_path(os.temp_dir(),'vls-112.tmp')
 
 	if !os.is_dir(tmp_dir) {
@@ -68,7 +68,7 @@ pub fn (mut l Logger) changfolder(folder_path string)?{
 
 //info 打印info param{msg:输出内容 loglv:log的输出级别}
 pub fn (mut l Logger) info<T>(msg T,loglv int)?{
-	if loglv == l.loglv && l.debug{
+	if l.loglv[loglv..loglv + 1] == '1' && l.debug{
 		defer{
 			l.file.flush()
 		}
@@ -79,7 +79,7 @@ pub fn (mut l Logger) info<T>(msg T,loglv int)?{
 
 //warning 打印warning param{msg:输出内容 loglv:log的输出级别}
 pub fn (mut l Logger) warning<T>(msg T,loglv int)?{
-	if loglv == l.loglv && l.debug{
+	if l.loglv[loglv..loglv + 1] == '1' && l.debug{
 		defer{
 			l.file.flush()
 		}
@@ -90,7 +90,7 @@ pub fn (mut l Logger) warning<T>(msg T,loglv int)?{
 
 //error 打印error param{msg:输出内容 loglv:log的输出级别}
 pub fn (mut l Logger) error<T>(msg T,loglv int)?{
-	if loglv == l.loglv && l.debug{
+	if l.loglv[loglv..loglv + 1] == '1' && l.debug{
 		defer{
 			l.file.flush()
 		}
@@ -101,7 +101,7 @@ pub fn (mut l Logger) error<T>(msg T,loglv int)?{
 
 //text 打印text param{msg:输出内容 loglv:log的输出级别 retract_str:缩进用的字符} 
 pub fn (mut l Logger) text<T>(msg T,loglv int,retract_str ...string)?{
-	if loglv == l.loglv && l.debug{
+	if l.loglv[loglv..loglv + 1] == '1' && l.debug{
 		defer{
 			l.file.flush()
 		}

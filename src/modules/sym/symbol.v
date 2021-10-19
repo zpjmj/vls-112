@@ -40,6 +40,26 @@ pub:
 	scope []int
 }
 
+struct SymbolStr{
+	name string
+	//类型
+	typ Symboltype
+	start_index int
+	end_index int
+	text string
+}
+
+pub fn (s Symbol) str()string{
+	ss := SymbolStr{
+		name:s.name
+		typ:s.typ
+		start_index:s.start_index
+		end_index:s.end_index
+		text:s.get_text().replace('\r\n',' ')
+	}
+	return ss.str()
+}
+
 //范围 左闭右开
 pub struct Range{
 pub:

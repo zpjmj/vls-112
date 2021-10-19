@@ -34,8 +34,8 @@ fn (mut ls Vls112) show_message(m string,mlv MessageType){
 
 fn (mut ls Vls112) send<T>(resp jsonrpc.Response<T>)? {
 	str := resp.json()
-	ls.logger.info('new response -->',0)?
-	ls.logger.text(str,0,'\t')?
+	ls.logger.info('new response -->',1)?
+	ls.logger.text(str,1,'\t')?
 	ls.io.send(str)
 }
 

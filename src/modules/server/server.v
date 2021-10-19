@@ -20,7 +20,8 @@ pub enum ServerStatus {
 
 struct Vls112 {
 	//储存log 信息输出等级
-	loglv int
+	loglv string
+	vexe string
 mut:
 	//log输出用对象
 	logger log.Logger
@@ -37,15 +38,15 @@ pub:
 	io ReceiveSender
 }
 
-pub fn new(io ReceiveSender,loglv int) Vls112 {
+pub fn new(io ReceiveSender,loglv string,vexe string) Vls112 {
 	mut vls_112 := Vls112{
 		io:io
 		loglv:loglv
 		logger:log.new_logger(io.debug,loglv)
-		symboldb:new_symboldb()
+		vexe:vexe
 	}
 
-	vls_112.logger.text('============= vls-112 start =============',0) or {vls_112.exit(1,err)}
+	vls_112.logger.text('============= vls-112 start =============',0) or {vls_112.vls112_exit(1,err)}
 
 	return vls_112
 }
@@ -60,7 +61,7 @@ pub fn (mut ls Vls112) start_parse_loop() {
 
 	for {
 		payload := ls.io.receive() or { continue }
-		ls.dispatch(payload) or {ls.exit(1,err)}
+		ls.dispatch(payload) or {ls.vls112_exit(1,err)}
 	}
 }
 
@@ -70,14 +71,14 @@ fn (mut ls Vls112) dispatch(payload string)?{
 		return
 	}
 
-	ls.logger.info('new request -->',0)?
-	ls.logger.text(request,0,'\t')?
+	ls.logger.info('new request -->',1)?
+	ls.logger.text(request,1,'\t')?
 
 	if ls.status == .initialized {
 		match request.method {
 			'initialized' {}
 			'shutdown' {
-				ls.exit(0)
+				ls.vls112_exit(0)
 			}
 			'textDocument/definition' {
 				ls.definition(request.id, request.params)?
@@ -87,7 +88,7 @@ fn (mut ls Vls112) dispatch(payload string)?{
 	} else {
 		match request.method {
 			'exit' {
-				ls.exit(0)
+				ls.vls112_exit(0)
 			}
 			'initialize' {
 				ls.initialize(request.id, request.params)?
@@ -104,7 +105,7 @@ fn (mut ls Vls112) dispatch(payload string)?{
 	}
 }
 
-fn (mut ls Vls112) exit(exit_code int,vls_error ...IError){
+fn (mut ls Vls112) vls112_exit(exit_code int,vls_error ...IError){
 	if exit_code != 0 {
 		ls.logger.error('-->',0) or {exit(exit_code)}
 		ls.logger.text(vls_error[0],0,'\t') or {exit(exit_code)}

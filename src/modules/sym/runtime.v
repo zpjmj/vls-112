@@ -548,3 +548,47 @@ fn (mut r Runtime) parse_single_sub_composite_symbol__(basic_start_index int,bas
 		}	
 	}
 }
+
+pub fn (r Runtime) get_fn_name(c_symbol Symbol)string{
+	if c_symbol.start_index < 0 || c_symbol.start_index >= r.all_basic_symbol.len{
+		return ''
+	}
+
+	if c_symbol.end_index < 0 || c_symbol.end_index >= r.all_basic_symbol.len{
+		return ''
+	}
+
+	if !(c_symbol.name == '{}fn' || c_symbol.name == '{}pub_fn'){
+		return ''
+	}	
+
+	for i:=c_symbol.start_index;i<=c_symbol.end_index;i++{
+		b_symbol := r.all_basic_symbol[i]
+		if b_symbol.name == 'fn'{
+			return r.all_basic_symbol[i+2].get_text()
+		}
+	}
+	return ''
+}
+
+pub fn (r Runtime) get_fn_symbol(c_symbol Symbol)Symbol{
+	if c_symbol.start_index < 0 || c_symbol.start_index >= r.all_basic_symbol.len{
+		return new_empty_symbol()
+	}
+
+	if c_symbol.end_index < 0 || c_symbol.end_index >= r.all_basic_symbol.len{
+		return new_empty_symbol()
+	}
+
+	if !(c_symbol.name == '{}fn' || c_symbol.name == '{}pub_fn'){
+		return new_empty_symbol()
+	}	
+
+	for i:=c_symbol.start_index;i<=c_symbol.end_index;i++{
+		b_symbol := r.all_basic_symbol[i]
+		if b_symbol.name == 'fn'{
+			return r.all_basic_symbol[i+2]
+		}
+	}
+	return new_empty_symbol()
+}
