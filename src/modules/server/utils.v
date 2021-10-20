@@ -39,7 +39,7 @@ fn (mut ls Vls112) send<T>(resp jsonrpc.Response<T>)? {
 	ls.io.send(str)
 }
 
-fn (mut ls Vls112) send_null(id string) {
+fn (mut ls Vls112) send_null(id string)? {
 	str := '{"jsonrpc":"${jsonrpc.version}","id":$id,"result":null}'
 	ls.logger.info('new response -->',1)?
 	ls.logger.text(str,1,'\t')?

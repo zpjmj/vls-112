@@ -44,7 +44,7 @@ fn (mut ls Vls112) definition(id string, params string)?{
 	dfl := ls.symboldb.search_df_locationlink(mut ls,position_line,position_character)?
 
 	if dfl.is_found == false{
-		ls.send_null(id)
+		ls.send_null(id)?
 	}	
 
 	df_location := jsonrpc.Response<lsp.LocationLink>{
