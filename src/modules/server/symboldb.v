@@ -622,18 +622,20 @@ fn (mut symdb Symboldb) find_other_module_df_locationlink(mut ls Vls112,fn_name 
 		}
 	}
 
-	now_file := symdb.now_file
 	module_dir_files := os.ls(module_dir)?
 	other_module_files := symdb.prefs.should_compile_filtered_files(module_dir, module_dir_files)
 
 	for fpath in other_module_files{
+		ls.logger.info('find_other_module_df_locationlink xxxxx1-->',2)?
 		symdb.parse(mut ls,fpath)?	
 		other_file_symbol := symdb.file_symbol_cache[symdb.now_file]
 		if fn_name in other_file_symbol.all_pub_fn{
+			ls.logger.info('find_other_module_df_locationlink xxxxx2-->',2)?
 			c_symbol := other_file_symbol.all_pub_fn[fn_name]
 			df_fn_symbol := other_file_symbol.runtime.get_fn_symbol(c_symbol)
 
 			if df_fn_symbol.name == 'name'{
+				ls.logger.info('find_other_module_df_locationlink xxxxx3-->',2)?
 				return DfLocationLink{
 					is_found:true
 					uri:lsp.document_uri_from_path(symdb.now_file)
@@ -654,6 +656,7 @@ fn (mut symdb Symboldb) find_other_module_df_locationlink(mut ls Vls112,fn_name 
 		}
 	}
 
+	ls.logger.info('find_other_module_df_locationlink xxxxx4-->',2)?
 	return DfLocationLink{
 		is_found:false
 	}
