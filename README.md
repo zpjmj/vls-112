@@ -1,5 +1,6 @@
 # vls-112 README
-基于vlang官方语言服务器vls的代码框架构建。只实现定义跳转功能。
+基于vlang官方语言服务器[vls](https://github.com/vlang/vls)的代码框架构建。<br>
+只实现定义跳转功能。
 
 ## Download / Installation
 目前存在内存泄露,每次跳转泄露0.1Mb左右
