@@ -106,13 +106,23 @@ fn (mut symdb Symboldb) parse(mut ls Vls112,file_path string)?{
 		file_symbol = symdb.file_symbol_cache[file_path]
 
 		if file_symbol.hexhash != hexhash{
+			file_symbol.hexhash = hexhash
 			unsafe{
 				file_symbol.runtime.all_basic_symbol.free()
 				file_symbol.runtime.all_composite_symbol.free()
+				file_symbol.import_module.free()
+				file_symbol.all_other_module_global.free()
+				file_symbol.all_fn.free()
+				file_symbol.all_pub_fn.free()
 			}
 			file_symbol.runtime.all_basic_symbol = []sym.Symbol{}
 			file_symbol.runtime.all_composite_symbol = []sym.Symbol{}
-			
+			file_symbol.module_name = ''
+			file_symbol.import_module = map[string][]string{}
+			file_symbol.all_other_module_global = map[string]string{}
+			file_symbol.all_fn = map[string]sym.Symbol{}
+			file_symbol.all_pub_fn = map[string]sym.Symbol{}
+
 			file_symbol.runtime.parse_basic_symbol()?
 			file_symbol.runtime.parse_composite_symbol()?
 			file_symbol.runtime.parse_sub_composite_symbol()?
@@ -356,15 +366,13 @@ fn (mut symdb Symboldb) parse(mut ls Vls112,file_path string)?{
 	}
 
 	//debug -----------------------------------------------
-	// ls.logger.info(symdb.prefs.str(),2)?
-	//ls.logger.info(symdb.vbuilder.module_search_paths.str(),2)?
 	// ls.logger.info('file_symbol-->',2)?
 	// ls.logger.text(file_symbol.runtime.basic_symbol_type_str(),2,'\t')?
 	// ls.logger.text(file_symbol.runtime.composite_symbol_type_str(),2,'\t')?
-	// // ls.logger.text('-------------------->',2,'\t')?
-	// // ls.logger.text(file_symbol.module_name.str(),2,'\t')?
-	// // ls.logger.text(file_symbol.import_module.str(),2,'\t')?
-	// // ls.logger.text(file_symbol.all_other_module_global.str(),2,'\t')?
+	// ls.logger.text('-------------------->',2,'\t')?
+	// ls.logger.text(file_symbol.module_name.str(),2,'\t')?
+	// ls.logger.text(file_symbol.import_module.str(),2,'\t')?
+	// ls.logger.text(file_symbol.all_other_module_global.str(),2,'\t')?
 
 	// mut k_arr:=[]string{}
 	// for k,_ in file_symbol.all_fn{
@@ -433,10 +441,11 @@ fn (mut symdb Symboldb) search_df_locationlink(mut ls Vls112,line int,character 
 						name_arr << b_symbol
 					}
 				}
-				unsafe{name_arr.free()}
-				name_arr = []sym.Symbol{}
 				if is_found{
 					break
+				}else{
+					unsafe{name_arr.free()}
+					name_arr = []sym.Symbol{}
 				}
 			}
 		}
@@ -476,7 +485,7 @@ fn (mut symdb Symboldb) find_own_module_df_locationlink(mut ls Vls112,fn_name st
 	}
 
 	ls.logger.info('find_own_module_df_locationlink-->',2)?
-	ls.logger.text('function name: $fn_name',2,'\t')?
+	ls.logger.text('function_name: `$fn_name`',2,'\t')?
 
 	if fn_name in own_file_symbol.all_fn{
 		c_symbol := own_file_symbol.all_fn[fn_name]
@@ -612,7 +621,7 @@ fn (mut symdb Symboldb) get_own_modele_files()?[]string{
 fn (mut symdb Symboldb) find_other_module_df_locationlink(mut ls Vls112,fn_name string,module_name string,fn_name_sym sym.Symbol)?DfLocationLink{
 	
 	ls.logger.info('find_other_module_df_locationlink-->',2)?
-	ls.logger.text('module name:$module_name  function name:$fn_name',2,'\t')?
+	ls.logger.text('module_name:`$module_name`  function_name:`$fn_name`',2,'\t')?
 
 	module_dir := symdb.vbuilder.find_module_path(module_name, symdb.now_file) or {''}
 
@@ -626,16 +635,18 @@ fn (mut symdb Symboldb) find_other_module_df_locationlink(mut ls Vls112,fn_name 
 	other_module_files := symdb.prefs.should_compile_filtered_files(module_dir, module_dir_files)
 
 	for fpath in other_module_files{
-		ls.logger.info('find_other_module_df_locationlink xxxxx1-->',2)?
 		symdb.parse(mut ls,fpath)?	
 		other_file_symbol := symdb.file_symbol_cache[symdb.now_file]
+
+		if other_file_symbol.module_name != module_name{
+			continue
+		}
+
 		if fn_name in other_file_symbol.all_pub_fn{
-			ls.logger.info('find_other_module_df_locationlink xxxxx2-->',2)?
 			c_symbol := other_file_symbol.all_pub_fn[fn_name]
 			df_fn_symbol := other_file_symbol.runtime.get_fn_symbol(c_symbol)
 
 			if df_fn_symbol.name == 'name'{
-				ls.logger.info('find_other_module_df_locationlink xxxxx3-->',2)?
 				return DfLocationLink{
 					is_found:true
 					uri:lsp.document_uri_from_path(symdb.now_file)
@@ -656,7 +667,6 @@ fn (mut symdb Symboldb) find_other_module_df_locationlink(mut ls Vls112,fn_name 
 		}
 	}
 
-	ls.logger.info('find_other_module_df_locationlink xxxxx4-->',2)?
 	return DfLocationLink{
 		is_found:false
 	}

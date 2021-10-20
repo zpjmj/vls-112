@@ -45,6 +45,7 @@ fn (mut ls Vls112) definition(id string, params string)?{
 
 	if dfl.is_found == false{
 		ls.send_null(id)?
+		return
 	}	
 
 	df_location := jsonrpc.Response<lsp.LocationLink>{

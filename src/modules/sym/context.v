@@ -31,7 +31,7 @@ pub fn new_context() Context{
 }
 
 //创建基本符号匹配规则
-pub fn (c Context) new_basic_symbol_define(start_func FuncByteBool,end_func FuncByteBool,continue_func FuncByteBool,is_fixed_length bool,len int,continue_fn_input_all bool)BasicSymbolDefine{
+pub fn (c Context) new_basic_symbol_define(start_func FuncByteBool,end_func FuncByteBool,continue_func FuncByteBool,is_fixed_length bool,len int,continue_fn_input_all bool,on_error_skip bool)BasicSymbolDefine{
 	return BasicSymbolDefine{
 		is_start:start_func
 		is_fixed_length:is_fixed_length
@@ -39,6 +39,7 @@ pub fn (c Context) new_basic_symbol_define(start_func FuncByteBool,end_func Func
 		is_continue:continue_func
 		is_end:end_func
 		continue_fn_input_all:continue_fn_input_all
+		on_error_skip:on_error_skip
 	}
 }
 

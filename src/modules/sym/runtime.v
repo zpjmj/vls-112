@@ -289,6 +289,12 @@ fn (mut r Runtime) parse_basic_symbol__()?{
 							}
 							goto next
 						}else{
+
+							if basic_symbol_define.on_error_skip{
+								scanner.popd()
+								continue
+							}
+
 							if undefine_start{
 								r.all_basic_symbol << Symbol{
 									name:''

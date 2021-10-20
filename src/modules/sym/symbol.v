@@ -121,6 +121,8 @@ pub struct BasicSymbolDefine{
 	is_end fn([]byte)bool [required]
 	//is_continue函数传入后续所有字符
 	continue_fn_input_all bool
+	//发生比正确匹配是是否跳过不输出undefined
+	on_error_skip bool
 }
 
 //组合符号

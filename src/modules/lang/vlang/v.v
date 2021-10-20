@@ -15,65 +15,71 @@ pub fn new_vlang_sym_context() ?sym.Context{
 	mut scope_index_map := map[string][]int{}
 	mut parent := []string{}
 
-	define01 := context.new_basic_symbol_define(basic_start_01,basic_end_01,basic_continue_01,false,0,false)
+	define01 := context.new_basic_symbol_define(basic_start_01,basic_end_01,basic_continue_01,false,0,false,false)
 	context.def_basic_symbol('ws',define01)?
 	
-	define02 := context.new_basic_symbol_define(basic_start_02,basic_end_02,empty_fn_byte,true,6,false)
+	define02 := context.new_basic_symbol_define(basic_start_02,basic_end_02,empty_fn_byte,true,6,false,false)
 	context.def_basic_symbol('import',define02)?
 	
-	define03 := context.new_basic_symbol_define(basic_start_03,basic_end_03,empty_fn_byte,true,3,false)
+	define03 := context.new_basic_symbol_define(basic_start_03,basic_end_03,empty_fn_byte,true,3,false,false)
 	context.def_basic_symbol('pub',define03)?
 	
-	define04 := context.new_basic_symbol_define(basic_start_04,basic_end_04,empty_fn_byte,true,6,false)
+	define04 := context.new_basic_symbol_define(basic_start_04,basic_end_04,empty_fn_byte,true,6,false,false)
 	context.def_basic_symbol('struct',define04)?
 	
-	define05 := context.new_basic_symbol_define(basic_start_05,basic_end_05,empty_fn_byte,true,2,false)
+	define05 := context.new_basic_symbol_define(basic_start_05,basic_end_05,empty_fn_byte,true,2,false,false)
 	context.def_basic_symbol('fn',define05)?
 	
-	define06 := context.new_basic_symbol_define(basic_start_06,empty_fn_byte2,empty_fn_byte,true,1,false)
+	define06 := context.new_basic_symbol_define(basic_start_06,empty_fn_byte2,empty_fn_byte,true,1,false,false)
 	context.def_basic_symbol('.',define06)?
 	
-	define07 := context.new_basic_symbol_define(basic_start_07,empty_fn_byte2,empty_fn_byte,true,1,false)
+	define07 := context.new_basic_symbol_define(basic_start_07,empty_fn_byte2,empty_fn_byte,true,1,false,false)
 	context.def_basic_symbol('{',define07)?
 	
-	define08 := context.new_basic_symbol_define(basic_start_08,empty_fn_byte2,empty_fn_byte,true,1,false)
+	define08 := context.new_basic_symbol_define(basic_start_08,empty_fn_byte2,empty_fn_byte,true,1,false,false)
 	context.def_basic_symbol('}',define08)?
 	
-	define09 := context.new_basic_symbol_define(basic_start_09,empty_fn_byte2,empty_fn_byte,true,1,false)
+	define09 := context.new_basic_symbol_define(basic_start_09,empty_fn_byte2,empty_fn_byte,true,1,false,false)
 	context.def_basic_symbol('(',define09)?
 	
-	define10 := context.new_basic_symbol_define(basic_start_10,empty_fn_byte2,empty_fn_byte,true,1,false)
+	define10 := context.new_basic_symbol_define(basic_start_10,empty_fn_byte2,empty_fn_byte,true,1,false,false)
 	context.def_basic_symbol(')',define10)?
 	
-	define11 := context.new_basic_symbol_define(basic_start_11,basic_end_11,empty_fn_byte,true,2,false)
+	define11 := context.new_basic_symbol_define(basic_start_11,basic_end_11,empty_fn_byte,true,2,false,false)
 	context.def_basic_symbol(':=',define11)?
 	
-	define12 := context.new_basic_symbol_define(basic_start_12,basic_end_12,empty_fn_byte,true,6,false)
+	define12 := context.new_basic_symbol_define(basic_start_12,basic_end_12,empty_fn_byte,true,6,false,false)
 	context.def_basic_symbol('module',define12)?
 	
-	define13 := context.new_basic_symbol_define(basic_start_13,basic_end_13,basic_continue_13,false,0,false)
+	define13 := context.new_basic_symbol_define(basic_start_13,basic_end_13,basic_continue_13,false,0,false,false)
 	context.def_basic_symbol('name',define13)?
 
-	define14 := context.new_basic_symbol_define(basic_start_14,basic_end_14,basic_continue_14,false,0,true)
+	define14 := context.new_basic_symbol_define(basic_start_14,basic_end_14,basic_continue_14,false,0,true,false)
 	context.def_basic_symbol('comment',define14)?
 	
-	define15 := context.new_basic_symbol_define(basic_start_15,basic_end_15,basic_continue_15,false,0,true)
+	define15 := context.new_basic_symbol_define(basic_start_15,basic_end_15,basic_continue_15,false,0,true,false)
 	context.def_basic_symbol('string_single_quotes',define15)?
 
-	define16 := context.new_basic_symbol_define(basic_start_16,basic_end_16,basic_continue_16,false,0,true)
+	define16 := context.new_basic_symbol_define(basic_start_16,basic_end_16,basic_continue_16,false,0,true,false)
 	context.def_basic_symbol('string_double_quotes',define16)?
 
-	define17 := context.new_basic_symbol_define(basic_start_17,basic_end_17,empty_fn_byte,true,2,false)
+	define17 := context.new_basic_symbol_define(basic_start_17,basic_end_17,empty_fn_byte,true,2,false,false)
 	context.def_basic_symbol('as',define17)?
 
-	define18 := context.new_basic_symbol_define(basic_start_18,empty_fn_byte2,empty_fn_byte,true,1,false)
+	define18 := context.new_basic_symbol_define(basic_start_18,empty_fn_byte2,empty_fn_byte,true,1,false,false)
 	context.def_basic_symbol(',',define18)?
 
-	define19 := context.new_basic_symbol_define(basic_start_19,empty_fn_byte2,empty_fn_byte,true,1,false)
+	define19 := context.new_basic_symbol_define(basic_start_19,empty_fn_byte2,empty_fn_byte,true,1,false,false)
 	context.def_basic_symbol('[',define19)?
 
-	define20 := context.new_basic_symbol_define(basic_start_20,empty_fn_byte2,empty_fn_byte,true,1,false)
+	define20 := context.new_basic_symbol_define(basic_start_20,empty_fn_byte2,empty_fn_byte,true,1,false,false)
 	context.def_basic_symbol(']',define20)?
+
+	define21 := context.new_basic_symbol_define(basic_start_21,basic_end_21,basic_continue_21,false,0,true,true)
+	context.def_basic_symbol('real_string_single_quotes',define21)?
+
+	define22 := context.new_basic_symbol_define(basic_start_22,basic_end_22,basic_continue_22,false,0,true,true)
+	context.def_basic_symbol('real_string_double_quotes',define22)?
 
 	basic_symbol_priority_level << 'ws'
 	basic_symbol_priority_level << 'comment'
@@ -92,6 +98,8 @@ pub fn new_vlang_sym_context() ?sym.Context{
 	basic_symbol_priority_level << '('
 	basic_symbol_priority_level << ')'
 	basic_symbol_priority_level << ':='
+	basic_symbol_priority_level << 'real_string_single_quotes'
+	basic_symbol_priority_level << 'real_string_double_quotes'	
 	basic_symbol_priority_level << 'name'
 	basic_symbol_priority_level << 'string_single_quotes'
 	basic_symbol_priority_level << 'string_double_quotes'
@@ -308,7 +316,7 @@ fn basic_end_12(input []byte)bool{
 //name
 fn basic_start_13(input []byte)bool{
 	for i in input{
-		if !((i > 0x40 && i < 0x5b) || (i > 0x60 && i < 0x7b)) {
+		if !((i > 0x40 && i < 0x5b) || (i > 0x60 && i < 0x7b) || i == 0x5f) {
 			return false
 		}
 	}
@@ -475,10 +483,73 @@ fn basic_start_20(input []byte)bool{
 	return key_com_start(input,`]`)
 }
 
+//real_string_single_quotes
+//real_string_double_quotes
+fn real_string_com_end(input []byte,quotes byte)bool{
 
+	if _likely_(input.len > 2 ){
+		if input[0] != quotes{
+			return false
+		}
 
+		if input[input.len - 2] != quotes{
+			return false
+		}
+		return true
+	}
 
+	return false
+}
 
+fn real_string_com_continue(input []byte,quotes byte)bool{
+
+	if input[input.len - 1] == sym.scan_end{
+		return false
+	}
+
+	if _likely_(input.len > 2 ){
+		if input[0] != quotes{
+			return false
+		}
+
+		if input[input.len - 2] == quotes{
+			return false
+		}
+	}
+
+	return true
+}
+
+fn basic_start_21(input []byte)bool{
+	for i in input{
+		if i != `r` {
+			return false
+		}
+	}
+	return true
+}
+fn basic_start_22(input []byte)bool{
+	for i in input{
+		if i != `r` {
+			return false
+		}
+	}
+	return true
+}
+
+fn basic_end_21(input []byte)bool{
+	return real_string_com_end(input,`'`)
+}
+fn basic_end_22(input []byte)bool{
+	return real_string_com_end(input,`"`)
+}
+
+fn basic_continue_21(input []byte)bool{
+	return real_string_com_continue(input,`'`)
+}
+fn basic_continue_22(input []byte)bool{
+	return real_string_com_continue(input,`"`)
+}
 
 
 //====================================================================
