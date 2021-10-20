@@ -571,7 +571,8 @@ fn rpar_2(input sym.Symbol,tier int,mut scope_index_arr []int)(bool,int,int,int)
 	mut tmp_tier := tier
 
 	if input.name == '('{
-		return true,1,0,tmp_tier++
+		tmp_tier++
+		return true,1,0,tmp_tier
 	}
 
 	if input.name == ')'{
@@ -598,7 +599,8 @@ fn rcbr_2_end(input sym.Symbol,tier int,mut scope_index_arr []int)(bool,int,int,
 	mut tmp_tier := tier
 
 	if input.name == '{'{
-		return true,1,0,tmp_tier++
+		tmp_tier++
+		return true,1,0,tmp_tier
 	}
 
 	if input.name == '}'{
@@ -669,7 +671,8 @@ fn rpar_2_end(input sym.Symbol,tier int,mut scope_index_arr []int)(bool,int,int,
 	mut tmp_tier := tier
 
 	if input.name == '('{
-		return true,1,0,tmp_tier++
+		tmp_tier++
+		return true,1,0,tmp_tier
 	}
 
 	if input.name == ')'{

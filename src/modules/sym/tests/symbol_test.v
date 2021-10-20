@@ -48,7 +48,7 @@ fn print_composite_symbol_type(all_symbol []sym.Symbol){
 	print('\n')
 }
 
-fn main(){
+fn test_main(){
 	mut context := sym.new_context()
 	mut runtime := sym.new_runtime(&context)
 	mut basic_symbol_priority_level := []string{}
@@ -209,8 +209,7 @@ fn main(){
 	sub_composite_symbol_priority_level << '()fn'
 	context.sub_composite_symbol_priority_level_push(sub_composite_symbol_priority_level) or {panic(err)}
 
-
-	runtime.file_path = os.join_path(os.getwd(),'testf.v')
+	runtime.file_path = os.real_path(os.join_path(os.dir(@FILE), 'testdata', 'testf.v'))
 	runtime.parse_basic_symbol() or {panic(err)}
 	runtime.parse_composite_symbol() or {panic(err)}
 	runtime.parse_sub_composite_symbol() or {panic(err)}

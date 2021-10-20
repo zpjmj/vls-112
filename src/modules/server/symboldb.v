@@ -5,6 +5,7 @@ import os
 import crypto.sha1
 import lsp
 import lang.vlang
+import toml
 
 import v.pref
 import v.builder
@@ -46,9 +47,26 @@ struct DfLocationLink{
 }
 
 fn new_symboldb(root_path string,vexe string)Symboldb{
+	mut main_f := root_path
+	vls_112_toml := os.join_path(root_path,'vls-112.toml')
+	if os.is_file(vls_112_toml){
+		for{
+			doc := toml.parse_file(vls_112_toml) or {break}
+			mut tmp_main_f := doc.value('symboldb.main').string()
+			if !os.is_abs_path(tmp_main_f){
+				tmp_main_f = os.join_path(root_path,tmp_main_f)
+			}
+
+			if os.is_file(tmp_main_f){
+				main_f = tmp_main_f
+			}
+			break
+		}
+	}
+	
 	os.setenv('VEXE', vexe, true)
 	//初始化v pref
-	mut args_and_flags := [root_path]
+	mut args_and_flags := [main_f]
 	v_env_args := util.join_env_vflags_and_os_args()
 	for args_i := os.args.len;args_i<v_env_args.len;args_i++{
 		args_and_flags << v_env_args[args_i]
@@ -337,30 +355,33 @@ fn (mut symdb Symboldb) parse(mut ls Vls112,file_path string)?{
 		file_symbol.module_name = 'main'
 	}
 
-	ls.logger.info('file_symbol-->',2)?
+	//debug -----------------------------------------------
+	// ls.logger.info(symdb.prefs.str(),2)?
+	//ls.logger.info(symdb.vbuilder.module_search_paths.str(),2)?
+	// ls.logger.info('file_symbol-->',2)?
 	// ls.logger.text(file_symbol.runtime.basic_symbol_type_str(),2,'\t')?
-	ls.logger.text(file_symbol.runtime.composite_symbol_type_str(),2,'\t')?
-	// ls.logger.text('-------------------->',2,'\t')?
-	// ls.logger.text(file_symbol.module_name.str(),2,'\t')?
-	// ls.logger.text(file_symbol.import_module.str(),2,'\t')?
-	// ls.logger.text(file_symbol.all_other_module_global.str(),2,'\t')?
+	// ls.logger.text(file_symbol.runtime.composite_symbol_type_str(),2,'\t')?
+	// // ls.logger.text('-------------------->',2,'\t')?
+	// // ls.logger.text(file_symbol.module_name.str(),2,'\t')?
+	// // ls.logger.text(file_symbol.import_module.str(),2,'\t')?
+	// // ls.logger.text(file_symbol.all_other_module_global.str(),2,'\t')?
 
-	mut k_arr:=[]string{}
-	for k,_ in file_symbol.all_fn{
-		k_arr << k
-	}
+	// mut k_arr:=[]string{}
+	// for k,_ in file_symbol.all_fn{
+	// 	k_arr << k
+	// }
 
-	ls.logger.text(k_arr,2,'\t')?
-	ls.logger.text(file_symbol.all_fn,2,'\t')?
+	// ls.logger.text(k_arr,2,'\t')?
+	// ls.logger.text(file_symbol.all_fn,2,'\t')?
 
-	k_arr=[]string{}
-	for k,_ in file_symbol.all_pub_fn{
-		k_arr << k
-	}
-	ls.logger.text(k_arr,2,'\t')?
-	ls.logger.text(file_symbol.all_pub_fn,2,'\t')?
+	// k_arr=[]string{}
+	// for k,_ in file_symbol.all_pub_fn{
+	// 	k_arr << k
+	// }
+	// ls.logger.text(k_arr,2,'\t')?
+	// ls.logger.text(file_symbol.all_pub_fn,2,'\t')?
 
-	ls.logger.text(file_symbol.runtime.all_composite_symbol,2,'\t')?
+	// ls.logger.text(file_symbol.runtime.all_composite_symbol,2,'\t')?
 }
 
 fn new_range(start_line int,start_character int,end_line int,end_character int)lsp.Range{
@@ -447,16 +468,15 @@ fn (mut symdb Symboldb) search_df_locationlink(mut ls Vls112,line int,character 
 }
 
 fn (mut symdb Symboldb) find_own_module_df_locationlink(mut ls Vls112,fn_name string,fn_name_sym sym.Symbol)?DfLocationLink{
-	ls.logger.info('find_own_module_df_locationlink-->',2)?
-	ls.logger.text(fn_name,2,'\t')?
-
 	own_file_symbol := symdb.file_symbol_cache[symdb.now_file]
-
 	//是否为外部引用的全局函数
 	if fn_name in own_file_symbol.all_other_module_global{
 		module_name := own_file_symbol.all_other_module_global[fn_name]
 		return symdb.find_other_module_df_locationlink(mut ls,fn_name,module_name,fn_name_sym)
 	}
+
+	ls.logger.info('find_own_module_df_locationlink-->',2)?
+	ls.logger.text('function name: $fn_name',2,'\t')?
 
 	if fn_name in own_file_symbol.all_fn{
 		c_symbol := own_file_symbol.all_fn[fn_name]
@@ -585,13 +605,54 @@ fn (mut symdb Symboldb) find_own_module_df_locationlink(mut ls Vls112,fn_name st
 
 fn (mut symdb Symboldb) get_own_modele_files()?[]string{
 	module_dir := os.dir(symdb.now_file)
-	mut files := os.ls(module_dir)?
+	files := os.ls(module_dir)?
 	return symdb.prefs.should_compile_filtered_files(module_dir, files)
 }
 
 fn (mut symdb Symboldb) find_other_module_df_locationlink(mut ls Vls112,fn_name string,module_name string,fn_name_sym sym.Symbol)?DfLocationLink{
 	
 	ls.logger.info('find_other_module_df_locationlink-->',2)?
+	ls.logger.text('module name:$module_name  function name:$fn_name',2,'\t')?
+
+	module_dir := symdb.vbuilder.find_module_path(module_name, symdb.now_file) or {''}
+
+	if module_dir == ''{
+		return DfLocationLink{
+			is_found:false
+		}
+	}
+
+	now_file := symdb.now_file
+	module_dir_files := os.ls(module_dir)?
+	other_module_files := symdb.prefs.should_compile_filtered_files(module_dir, module_dir_files)
+
+	for fpath in other_module_files{
+		symdb.parse(mut ls,fpath)?	
+		other_file_symbol := symdb.file_symbol_cache[symdb.now_file]
+		if fn_name in other_file_symbol.all_pub_fn{
+			c_symbol := other_file_symbol.all_pub_fn[fn_name]
+			df_fn_symbol := other_file_symbol.runtime.get_fn_symbol(c_symbol)
+
+			if df_fn_symbol.name == 'name'{
+				return DfLocationLink{
+					is_found:true
+					uri:lsp.document_uri_from_path(symdb.now_file)
+					target_range:new_range(c_symbol.text_range.start_line,
+											c_symbol.text_range.start_character,
+											c_symbol.text_range.end_line,
+											c_symbol.text_range.end_character)
+					target_selection_range:new_range(df_fn_symbol.text_range.start_line,
+											df_fn_symbol.text_range.start_character,
+											df_fn_symbol.text_range.end_line,
+											df_fn_symbol.text_range.end_character)
+					origin_selection_range:new_range(fn_name_sym.text_range.start_line,
+											fn_name_sym.text_range.start_character,
+											fn_name_sym.text_range.end_line,
+											fn_name_sym.text_range.end_character)
+				}
+			}
+		}
+	}
 
 	return DfLocationLink{
 		is_found:false

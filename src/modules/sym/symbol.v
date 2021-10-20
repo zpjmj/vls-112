@@ -49,13 +49,35 @@ struct SymbolStr{
 	text string
 }
 
-pub fn (s Symbol) str()string{
+pub fn (sym Symbol) str()string{
+	text := sym.get_text()
+	mut index := 0
+	for i,s in text{
+		if s == `\n`{
+			if i > 0 {
+				x := text[i - 1]
+				if x == `\r`{
+					index = i - 1
+				}else{
+					index = i
+				}
+			}else{
+				index = i
+			}
+			break
+		}
+	}
+
+	if index ==  0 {
+		index = text.len
+	}
+
 	ss := SymbolStr{
-		name:s.name
-		typ:s.typ
-		start_index:s.start_index
-		end_index:s.end_index
-		text:s.get_text().replace('\r\n',' ')
+		name:sym.name
+		typ:sym.typ
+		start_index:sym.start_index
+		end_index:sym.end_index
+		text:text[0..index] 
 	}
 	return ss.str()
 }

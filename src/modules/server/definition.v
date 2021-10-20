@@ -44,12 +44,8 @@ fn (mut ls Vls112) definition(id string, params string)?{
 	dfl := ls.symboldb.search_df_locationlink(mut ls,position_line,position_character)?
 
 	if dfl.is_found == false{
-		return
+		ls.send_null(id)
 	}	
-	// loc_uri := lsp.document_uri_from_path(r'c:\Users\zhangjianguo\Desktop\test7\test7.v')
-	// target_range := new_range(0,0,6,0)
-	// target_selection_range := new_range(2,0,2,8)
-	// origin_selection_range := new_range(8,0,9,0)
 
 	df_location := jsonrpc.Response<lsp.LocationLink>{
 		id: id

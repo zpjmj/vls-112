@@ -24,9 +24,15 @@ pub mut:
 pub fn (mut r Runtime) basic_symbol_type_str() string{
 	mut all_symbol := r.all_basic_symbol
 	mut sb := strings.new_builder(1000)
+	mut no := 0
+	mut no_str := ''
+
 	sb.write_string('\n')
 	sb.write_string('BASIC:========================================================\n')
-	
+	no_str = ('0000' + '$no')
+	no_str = no_str[no_str.len -4 .. no_str.len] + ': '
+	sb.write_string(no_str)
+
 	for i,s in all_symbol{
 		if s.typ != .composite{
 			if s.typ == .undefined{
@@ -37,6 +43,10 @@ pub fn (mut r Runtime) basic_symbol_type_str() string{
 			sb.write_string(' ')
 			if (i+1)%10 == 0 {
 				sb.write_string('\n')
+				no+=10
+				no_str = ('0000' + '$no')
+				no_str = no_str[no_str.len -4 .. no_str.len] + ': '
+				sb.write_string(no_str)
 			} 
 		}
 
@@ -51,8 +61,13 @@ pub fn (mut r Runtime) basic_symbol_type_str() string{
 pub fn (mut r Runtime) composite_symbol_type_str() string{
 	mut all_symbol := r.all_composite_symbol
 	mut sb := strings.new_builder(1000)
+	mut no := 0
+	mut no_str := ''
 	sb.write_string('\n')
 	sb.write_string('COMPOSITE:====================================================\n')
+	no_str = ('0000' + '$no')
+	no_str = no_str[no_str.len -4 .. no_str.len] + ': '
+	sb.write_string(no_str)
 
 	for i,s in all_symbol{
 
@@ -61,6 +76,10 @@ pub fn (mut r Runtime) composite_symbol_type_str() string{
 			sb.write_string(' ')
 			if (i+1)%10 == 0 {
 				sb.write_string('\n')
+				no+=10
+				no_str = ('0000' + '$no')
+				no_str = no_str[no_str.len -4 .. no_str.len] + ': '
+				sb.write_string(no_str)
 			} 
 		}
 

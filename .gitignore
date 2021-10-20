@@ -7,3 +7,4 @@ vls_112
 *.dylib
 *.dll
 test.json
+vls-112-debug.log
