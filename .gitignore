@@ -8,3 +8,4 @@ vls_112
 *.dll
 test.json
 vls-112-debug.log
+vls.log
