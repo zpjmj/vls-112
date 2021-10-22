@@ -475,15 +475,22 @@ fn (mut r Runtime) parse_sub_composite_symbol__()?{
 			mut basic_end_index := 0
 
 			if scope_index.len == 0{
-				basic_start_index = composite_symbol.start_index
-				basic_end_index = composite_symbol.end_index
 
-				r.parse_single_sub_composite_symbol__(basic_start_index,basic_end_index,&sub_symbol.composite_symbol)?
+				for i:=0;i<composite_symbol.scope.len - 1;i+=2{
+					basic_start_index = composite_symbol.scope[i]
+					basic_end_index = composite_symbol.scope[i+1]
+					r.parse_single_sub_composite_symbol__(basic_start_index,basic_end_index,&sub_symbol.composite_symbol)?
+				}
 
 			}else{
 				for i in scope_index{
-					si := i * 2
-					si_2 := si + 1
+					mut si := i * 2
+					mut si_2 := si + 1
+
+					if i < 0{
+						si = composite_symbol.scope.len + si
+						si_2 = composite_symbol.scope.len + si_2
+					}
 
 					if si_2 >= composite_symbol.scope.len{
 						continue

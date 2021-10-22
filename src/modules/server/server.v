@@ -57,7 +57,7 @@ pub fn (mut ls Vls112) start_parse_loop() {
 	ls.io.init() or { panic(err) }
 
 		// Show message that VLS is not yet ready!
-	ls.show_message('VLS is a work-in-progress `debug_mode:${ls.io.debug.str()} loglv:${ls.loglv.str()}`',.info)
+	ls.show_message('VLS-112 is a work-in-progress `debug_mode:${ls.io.debug.str()} loglv:${ls.loglv.str()}`',.info)
 
 	for {
 		payload := ls.io.receive() or { continue }
@@ -78,10 +78,13 @@ fn (mut ls Vls112) dispatch(payload string)?{
 		match request.method {
 			'initialized' {}
 			'shutdown' {
-				ls.vls112_exit(0)
+				ls.shutdown(request.id)?
 			}
 			'textDocument/definition' {
 				ls.definition(request.id, request.params)?
+			}
+			'textDocument/codeLens'{
+				ls.send_null(request.id)?
 			}
 			else {}
 		}
@@ -114,4 +117,10 @@ fn (mut ls Vls112) vls112_exit(exit_code int,vls_error ...IError){
 	ls.logger.text('============== vls-112 end ==============',0) or {exit(exit_code)}
 	ls.logger.close()
 	exit(exit_code)
+}
+
+fn (mut ls Vls112) shutdown(id string)? {
+	ls.status = .shutdown
+	ls.send_null(id)?
+	ls.vls112_exit(0)
 }

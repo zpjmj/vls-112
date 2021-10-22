@@ -166,8 +166,8 @@ pub fn new_vlang_sym_context() ?sym.Context{
 	scope_index_map['{}fn'] = [0,1]
 	scope_index_map['{}pub_method'] = [1,2]
 	scope_index_map['{}method'] = [1,2]
-	scope_index_map['()fn'] = [0]
-	match_fn_arr=[fn_dot_0,fn_name_1,ws_0,lpar_1,rpar_2_end]
+	scope_index_map['()fn'] = []int{}
+	match_fn_arr=[lsbr_0,rsbr_2,fn_dot_0,fn_name_1,ws_0,lpar_1,rpar_2_end]
 	define_sc01 := context.new_composite_symbol_define(sub_composite_start_name,match_fn_arr)
 	context.def_sub_composite_symbol('()fn',define_sc01,parent,scope_index_map)?
 
@@ -685,6 +685,34 @@ fn rcbr_2_end(input sym.Symbol,tier int,mut scope_index_arr []int)(bool,int,int,
 	return true,1,0,tmp_tier
 }
 
+fn lsbr_0(input sym.Symbol,tier int,mut scope_index_arr []int)(bool,int,int,int){
+	if input.name == '['{
+		scope_index_arr << input.start_index
+		return true,1,1,1
+	}
+
+	return true,0,2,0
+}
+
+fn rsbr_2(input sym.Symbol,tier int,mut scope_index_arr []int)(bool,int,int,int){
+	mut tmp_tier := tier
+
+	if input.name == '['{
+		tmp_tier++
+		return true,1,0,tmp_tier
+	}
+
+	if input.name == ']'{
+		tmp_tier--
+		if tmp_tier == 0{
+			scope_index_arr << input.start_index
+			return true,1,-1,0
+		}
+	}
+
+	return true,1,0,tmp_tier
+}
+
 fn import_molule_continue_01(input sym.Symbol,tier int,mut scope_index_arr []int)(bool,int,int,int){
 	if input.name in ['name','.','as','{','}',',','ws']{
 		return true,1,0,0
@@ -733,7 +761,7 @@ fn fn_dot_0(input sym.Symbol,tier int,mut scope_index_arr []int)(bool,int,int,in
 
 fn fn_name_1(input sym.Symbol,tier int,mut scope_index_arr []int)(bool,int,int,int){
 	if input.name == 'name'{
-		return true,1,-1,0
+		return true,1,-3,0
 	}
 	return false,0,0,0
 }

@@ -3,6 +3,7 @@ import os
 
 param := os.args[1..]
 
+mut gc:=''
 mut prod := ''
 
 if param.len > 0 {
@@ -19,7 +20,7 @@ vls_112_source_path := join_path(src_path, 'vls-112.v')
 
 vls_112_exec_path := join_path(pwd, 'vls-112')
 
-commend := @VEXE + ' $prod"$vls_112_source_path" -o "$vls_112_exec_path"'
+commend := @VEXE + ' $prod$gc"$vls_112_source_path" -o "$vls_112_exec_path"'
 println(commend)
 
 re := system(commend)

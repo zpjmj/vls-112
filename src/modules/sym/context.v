@@ -93,6 +93,9 @@ pub fn (mut c Context) def_composite_symbol(name string,define CompositeSymbolDe
 }
 
 //定义子组合符号
+//scope_index:
+//"父符号名":范围对index 可正可负
+//index arr为空时表示对对所有子范围进行匹配
 pub fn (mut c Context) def_sub_composite_symbol(name string,define CompositeSymbolDefine,parent []string,scope_index map[string][]int)?{
 	if name in c.symbol_map{
 		return error('The symbol `$name` is already defined.')

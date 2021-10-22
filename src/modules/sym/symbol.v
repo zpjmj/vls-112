@@ -47,6 +47,7 @@ struct SymbolStr{
 	start_index int
 	end_index int
 	text string
+	scope []int
 }
 
 pub fn (sym Symbol) str()string{
@@ -78,6 +79,7 @@ pub fn (sym Symbol) str()string{
 		start_index:sym.start_index
 		end_index:sym.end_index
 		text:text[0..index] 
+		scope:sym.scope
 	}
 	return ss.str()
 }
