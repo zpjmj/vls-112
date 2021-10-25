@@ -366,30 +366,35 @@ fn (mut symdb Symboldb) parse(mut ls Vls112,file_path string)?{
 	}
 
 	//debug -----------------------------------------------
-	// ls.logger.info('file_symbol-->',2)?
-	// ls.logger.text(file_symbol.runtime.basic_symbol_type_str(),2,'\t')?
-	// ls.logger.text(file_symbol.runtime.composite_symbol_type_str(),2,'\t')?
-	// ls.logger.text('-------------------->',2,'\t')?
-	// ls.logger.text(file_symbol.module_name.str(),2,'\t')?
-	// ls.logger.text(file_symbol.import_module.str(),2,'\t')?
-	// ls.logger.text(file_symbol.all_other_module_global.str(),2,'\t')?
+	ls.logger.info('file_symbol-->',3)?
+	ls.logger.text(file_symbol.runtime.basic_symbol_type_str(),3,'\t')?
+	ls.logger.text(file_symbol.runtime.composite_symbol_type_str(),3,'\t')?
+	ls.logger.text('-------------------->',3,'\t')?
+	ls.logger.info('module_name-->',3)?
+	ls.logger.text(file_symbol.module_name.str(),3,'\t')?
+	ls.logger.info('import_module-->',3)?
+	ls.logger.text(file_symbol.import_module.str(),3,'\t')?
+	ls.logger.info('all_other_module_global-->',3)?
+	ls.logger.text(file_symbol.all_other_module_global.str(),3,'\t')?
 
-	// mut k_arr:=[]string{}
-	// for k,_ in file_symbol.all_fn{
-	// 	k_arr << k
-	// }
+	mut k_arr:=[]string{}
+	for k,_ in file_symbol.all_fn{
+		k_arr << k
+	}
 
-	// ls.logger.text(k_arr,2,'\t')?
-	// ls.logger.text(file_symbol.all_fn,2,'\t')?
+	ls.logger.info('all_fn-->',3)?
+	ls.logger.text(k_arr,3,'\t')?
+	ls.logger.text(file_symbol.all_fn,3,'\t')?
 
-	// k_arr=[]string{}
-	// for k,_ in file_symbol.all_pub_fn{
-	// 	k_arr << k
-	// }
-	// ls.logger.text(k_arr,2,'\t')?
-	// ls.logger.text(file_symbol.all_pub_fn,2,'\t')?
+	k_arr=[]string{}
+	for k,_ in file_symbol.all_pub_fn{
+		k_arr << k
+	}
+	ls.logger.info('all_pub_fn-->',3)?
+	ls.logger.text(k_arr,3,'\t')?
+	ls.logger.text(file_symbol.all_pub_fn,3,'\t')?
 
-	// ls.logger.text(file_symbol.runtime.all_composite_symbol,2,'\t')?
+	ls.logger.text(file_symbol.runtime.all_composite_symbol,3,'\t')?
 }
 
 fn new_range(start_line int,start_character int,end_line int,end_character int)lsp.Range{
