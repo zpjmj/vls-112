@@ -107,14 +107,14 @@ fn (mut symdb Symboldb) parse(mut ls Vls112,file_path string)?{
 
 		if file_symbol.hexhash != hexhash{
 			file_symbol.hexhash = hexhash
-			unsafe{
-				file_symbol.runtime.all_basic_symbol.free()
-				file_symbol.runtime.all_composite_symbol.free()
-				file_symbol.import_module.free()
-				file_symbol.all_other_module_global.free()
-				file_symbol.all_fn.free()
-				file_symbol.all_pub_fn.free()
-			}
+			// unsafe{
+			// 	file_symbol.runtime.all_basic_symbol.free()
+			// 	file_symbol.runtime.all_composite_symbol.free()
+			// 	file_symbol.import_module.free()
+			// 	file_symbol.all_other_module_global.free()
+			// 	file_symbol.all_fn.free()
+			// 	file_symbol.all_pub_fn.free()
+			// }
 			file_symbol.runtime.all_basic_symbol = []sym.Symbol{}
 			file_symbol.runtime.all_composite_symbol = []sym.Symbol{}
 			file_symbol.module_name = ''

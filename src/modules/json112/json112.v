@@ -1,4 +1,3 @@
-//[manualfree]
 module json112
 
 [heap]

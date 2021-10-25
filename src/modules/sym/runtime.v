@@ -54,7 +54,7 @@ pub fn (mut r Runtime) basic_symbol_type_str() string{
 	sb.write_string('\n')
 	sb.write_string('\n')
 	res := sb.str()
-	unsafe { sb.free() }
+	// unsafe { sb.free() }
 	return res
 }
 
@@ -87,7 +87,7 @@ pub fn (mut r Runtime) composite_symbol_type_str() string{
 	sb.write_string('\n')
 	sb.write_string('\n')
 	res := sb.str()
-	unsafe { sb.free() }
+	// unsafe { sb.free() }
 	return res
 }
 

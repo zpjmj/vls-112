@@ -9,6 +9,7 @@ mut prod := ''
 if param.len > 0 {
 	if param[0] == '-prod' {
 		prod = '-prod '
+		gc = ''
 	}
 }
 
