@@ -81,6 +81,129 @@ pub fn new_vlang_sym_context() ?sym.Context{
 	define22 := context.new_basic_symbol_define(basic_start_22,basic_end_22,basic_continue_22,false,0,true,true)
 	context.def_basic_symbol('real_string_double_quotes',define22)?
 
+	define23 := context.new_basic_symbol_define(basic_start_23,basic_end_23,empty_fn_byte,true,3,false,false)
+	context.def_basic_symbol('asm',define23)?
+
+	define24 := context.new_basic_symbol_define(basic_start_24,basic_end_24,empty_fn_byte,true,6,false,false)
+	context.def_basic_symbol('assert',define24)?
+
+	define25 := context.new_basic_symbol_define(basic_start_25,basic_end_25,empty_fn_byte,true,6,false,false)
+	context.def_basic_symbol('atomic',define25)?
+
+	define26 := context.new_basic_symbol_define(basic_start_26,basic_end_26,empty_fn_byte,true,5,false,false)
+	context.def_basic_symbol('break',define26)?
+
+	define27 := context.new_basic_symbol_define(basic_start_27,basic_end_27,empty_fn_byte,true,4,false,false)
+	context.def_basic_symbol('chan',define27)?
+
+	define28 := context.new_basic_symbol_define(basic_start_28,basic_end_28,empty_fn_byte,true,5,false,false)
+	context.def_basic_symbol('const',define28)?
+
+	define29 := context.new_basic_symbol_define(basic_start_29,basic_end_29,empty_fn_byte,true,8,false,false)
+	context.def_basic_symbol('continue',define29)?
+
+	define30 := context.new_basic_symbol_define(basic_start_30,basic_end_30,empty_fn_byte,true,5,false,false)
+	context.def_basic_symbol('defer',define30)?
+
+	define31 := context.new_basic_symbol_define(basic_start_31,basic_end_31,empty_fn_byte,true,4,false,false)
+	context.def_basic_symbol('else',define31)?
+
+	define32 := context.new_basic_symbol_define(basic_start_32,basic_end_32,empty_fn_byte,true,4,false,false)
+	context.def_basic_symbol('enum',define32)?
+
+	define33 := context.new_basic_symbol_define(basic_start_33,basic_end_33,empty_fn_byte,true,5,false,false)
+	context.def_basic_symbol('false',define33)?
+
+	define34 := context.new_basic_symbol_define(basic_start_34,basic_end_34,empty_fn_byte,true,3,false,false)
+	context.def_basic_symbol('for',define34)?
+
+	define35 := context.new_basic_symbol_define(basic_start_35,basic_end_35,empty_fn_byte,true,2,false,false)
+	context.def_basic_symbol('go',define35)?
+
+	define36 := context.new_basic_symbol_define(basic_start_36,basic_end_36,empty_fn_byte,true,4,false,false)
+	context.def_basic_symbol('goto',define36)?
+
+	define37 := context.new_basic_symbol_define(basic_start_37,basic_end_37,empty_fn_byte,true,2,false,false)
+	context.def_basic_symbol('if',define37)?
+
+	define38 := context.new_basic_symbol_define(basic_start_38,basic_end_38,empty_fn_byte,true,2,false,false)
+	context.def_basic_symbol('in',define38)?
+
+	define39 := context.new_basic_symbol_define(basic_start_39,basic_end_39,empty_fn_byte,true,9,false,false)
+	context.def_basic_symbol('interface',define39)?
+
+	define40 := context.new_basic_symbol_define(basic_start_40,basic_end_40,empty_fn_byte,true,2,false,false)
+	context.def_basic_symbol('is',define40)?
+
+	define41 := context.new_basic_symbol_define(basic_start_41,basic_end_41,empty_fn_byte,true,4,false,false)
+	context.def_basic_symbol('lock',define41)?
+
+	define42 := context.new_basic_symbol_define(basic_start_42,basic_end_42,empty_fn_byte,true,5,false,false)
+	context.def_basic_symbol('match',define42)?
+
+	define43 := context.new_basic_symbol_define(basic_start_43,basic_end_43,empty_fn_byte,true,3,false,false)
+	context.def_basic_symbol('mut',define43)?
+
+	define44 := context.new_basic_symbol_define(basic_start_44,basic_end_44,empty_fn_byte,true,4,false,false)
+	context.def_basic_symbol('none',define44)?
+
+	define45 := context.new_basic_symbol_define(basic_start_45,basic_end_45,empty_fn_byte,true,2,false,false)
+	context.def_basic_symbol('or',define45)?
+
+	define46 := context.new_basic_symbol_define(basic_start_46,basic_end_46,empty_fn_byte,true,6,false,false)
+	context.def_basic_symbol('return',define46)?
+
+	define47 := context.new_basic_symbol_define(basic_start_47,basic_end_47,empty_fn_byte,true,5,false,false)
+	context.def_basic_symbol('rlock',define47)?
+
+	define48 := context.new_basic_symbol_define(basic_start_48,basic_end_48,empty_fn_byte,true,6,false,false)
+	context.def_basic_symbol('select',define48)?
+
+	define49 := context.new_basic_symbol_define(basic_start_49,basic_end_49,empty_fn_byte,true,6,false,false)
+	context.def_basic_symbol('shared',define49)?
+
+	define50 := context.new_basic_symbol_define(basic_start_50,basic_end_50,empty_fn_byte,true,6,false,false)
+	context.def_basic_symbol('sizeof',define50)?
+
+	define51 := context.new_basic_symbol_define(basic_start_51,basic_end_51,empty_fn_byte,true,6,false,false)
+	context.def_basic_symbol('static',define51)?
+
+	define52 := context.new_basic_symbol_define(basic_start_52,basic_end_52,empty_fn_byte,true,6,false,false)
+	context.def_basic_symbol('thread',define52)?
+
+	define53 := context.new_basic_symbol_define(basic_start_53,basic_end_53,empty_fn_byte,true,4,false,false)
+	context.def_basic_symbol('true',define53)?
+
+	define54 := context.new_basic_symbol_define(basic_start_54,basic_end_54,empty_fn_byte,true,4,false,false)
+	context.def_basic_symbol('type',define54)?
+
+	define55 := context.new_basic_symbol_define(basic_start_55,basic_end_55,empty_fn_byte,true,6,false,false)
+	context.def_basic_symbol('typeof',define55)?
+
+	define56 := context.new_basic_symbol_define(basic_start_56,basic_end_56,empty_fn_byte,true,8,false,false)
+	context.def_basic_symbol('volatile',define56)?
+
+	define57 := context.new_basic_symbol_define(basic_start_57,basic_end_57,empty_fn_byte,true,5,false,false)
+	context.def_basic_symbol('union',define57)?
+
+	define58 := context.new_basic_symbol_define(basic_start_58,basic_end_58,empty_fn_byte,true,6,false,false)
+	context.def_basic_symbol('unsafe',define58)?
+
+	define59 := context.new_basic_symbol_define(basic_start_59,basic_end_59,empty_fn_byte,true,10,false,false)
+	context.def_basic_symbol('__offsetof',define59)?
+
+	define60 := context.new_basic_symbol_define(basic_start_60,basic_end_60,empty_fn_byte,true,8,false,false)
+	context.def_basic_symbol('__global',define60)?
+
+	define61 := context.new_basic_symbol_define(basic_start_61,empty_fn_byte2,empty_fn_byte,true,1,false,false)
+	context.def_basic_symbol('<',define61)?
+
+	define62 := context.new_basic_symbol_define(basic_start_62,empty_fn_byte2,empty_fn_byte,true,1,false,false)
+	context.def_basic_symbol('>',define62)?
+
+	define63 := context.new_basic_symbol_define(basic_start_63,basic_end_63,basic_continue_63,false,0,true,false)
+	context.def_basic_symbol('rune',define63)?
+
 	basic_symbol_priority_level << 'ws'
 	basic_symbol_priority_level << 'comment'
 	basic_symbol_priority_level << 'module'
@@ -89,6 +212,44 @@ pub fn new_vlang_sym_context() ?sym.Context{
 	basic_symbol_priority_level << 'struct'
 	basic_symbol_priority_level << 'fn'
 	basic_symbol_priority_level << 'as'
+	basic_symbol_priority_level << 'asm'
+	basic_symbol_priority_level << 'assert'
+	basic_symbol_priority_level << 'atomic'
+	basic_symbol_priority_level << 'break'
+	basic_symbol_priority_level << 'chan'
+	basic_symbol_priority_level << 'const'
+	basic_symbol_priority_level << 'continue'
+	basic_symbol_priority_level << 'defer'
+	basic_symbol_priority_level << 'else'
+	basic_symbol_priority_level << 'enum'
+	basic_symbol_priority_level << 'false'
+	basic_symbol_priority_level << 'for'
+	basic_symbol_priority_level << 'go'
+	basic_symbol_priority_level << 'goto'
+	basic_symbol_priority_level << 'if'
+	basic_symbol_priority_level << 'in'
+	basic_symbol_priority_level << 'interface'
+	basic_symbol_priority_level << 'is'
+	basic_symbol_priority_level << 'lock'
+	basic_symbol_priority_level << 'match'
+	basic_symbol_priority_level << 'mut'
+	basic_symbol_priority_level << 'none'
+	basic_symbol_priority_level << 'or'
+	basic_symbol_priority_level << 'return'
+	basic_symbol_priority_level << 'rlock'
+	basic_symbol_priority_level << 'select'
+	basic_symbol_priority_level << 'shared'
+	basic_symbol_priority_level << 'sizeof'
+	basic_symbol_priority_level << 'static'
+	basic_symbol_priority_level << 'thread'
+	basic_symbol_priority_level << 'true'
+	basic_symbol_priority_level << 'type'
+	basic_symbol_priority_level << 'typeof'
+	basic_symbol_priority_level << 'volatile'
+	basic_symbol_priority_level << 'union'
+	basic_symbol_priority_level << 'unsafe'
+	basic_symbol_priority_level << '__offsetof'
+	basic_symbol_priority_level << '__global'
 	basic_symbol_priority_level << '.'
 	basic_symbol_priority_level << ','
 	basic_symbol_priority_level << '['
@@ -97,12 +258,15 @@ pub fn new_vlang_sym_context() ?sym.Context{
 	basic_symbol_priority_level << '}'
 	basic_symbol_priority_level << '('
 	basic_symbol_priority_level << ')'
+	basic_symbol_priority_level << '<'
+	basic_symbol_priority_level << '>'
 	basic_symbol_priority_level << ':='
 	basic_symbol_priority_level << 'real_string_single_quotes'
 	basic_symbol_priority_level << 'real_string_double_quotes'	
 	basic_symbol_priority_level << 'name'
 	basic_symbol_priority_level << 'string_single_quotes'
 	basic_symbol_priority_level << 'string_double_quotes'
+	basic_symbol_priority_level << 'rune'
 	context.basic_symbol_priority_level_push(basic_symbol_priority_level)?
 
 	/*
@@ -551,6 +715,335 @@ fn basic_continue_22(input []byte)bool{
 	return real_string_com_continue(input,`"`)
 }
 
+//asm
+fn basic_start_23(input []byte)bool{
+	return key_com_start(input,`a`)
+}
+fn basic_end_23(input []byte)bool{
+	return key_com_end(input,3,'sm')
+}
+
+//assert
+fn basic_start_24(input []byte)bool{
+	return key_com_start(input,`a`)
+}
+fn basic_end_24(input []byte)bool{
+	return key_com_end(input,6,'ssert')
+}
+
+//atomic
+fn basic_start_25(input []byte)bool{
+	return key_com_start(input,`a`)
+}
+fn basic_end_25(input []byte)bool{
+	return key_com_end(input,6,'tomic')
+}
+
+//break
+fn basic_start_26(input []byte)bool{
+	return key_com_start(input,`b`)
+}
+fn basic_end_26(input []byte)bool{
+	return key_com_end(input,5,'reak')
+}
+
+//chan
+fn basic_start_27(input []byte)bool{
+	return key_com_start(input,`c`)
+}
+fn basic_end_27(input []byte)bool{
+	return key_com_end(input,4,'han')
+}
+
+//const
+fn basic_start_28(input []byte)bool{
+	return key_com_start(input,`c`)
+}
+fn basic_end_28(input []byte)bool{
+	return key_com_end(input,5,'onst')
+}
+
+//continue
+fn basic_start_29(input []byte)bool{
+	return key_com_start(input,`c`)
+}
+fn basic_end_29(input []byte)bool{
+	return key_com_end(input,8,'ontinue')
+}
+
+//defer
+fn basic_start_30(input []byte)bool{
+	return key_com_start(input,`d`)
+}
+fn basic_end_30(input []byte)bool{
+	return key_com_end(input,5,'efer')
+}
+
+//else
+fn basic_start_31(input []byte)bool{
+	return key_com_start(input,`e`)
+}
+fn basic_end_31(input []byte)bool{
+	return key_com_end(input,4,'lse')
+}
+
+//enum
+fn basic_start_32(input []byte)bool{
+	return key_com_start(input,`e`)
+}
+fn basic_end_32(input []byte)bool{
+	return key_com_end(input,4,'num')
+}
+
+//false
+fn basic_start_33(input []byte)bool{
+	return key_com_start(input,`f`)
+}
+fn basic_end_33(input []byte)bool{
+	return key_com_end(input,5,'alse')
+}
+
+//for
+fn basic_start_34(input []byte)bool{
+	return key_com_start(input,`f`)
+}
+fn basic_end_34(input []byte)bool{
+	return key_com_end(input,3,'or')
+}
+
+//go
+fn basic_start_35(input []byte)bool{
+	return key_com_start(input,`g`)
+}
+fn basic_end_35(input []byte)bool{
+	return key_com_end(input,2,'o')
+}
+
+//goto
+fn basic_start_36(input []byte)bool{
+	return key_com_start(input,`g`)
+}
+fn basic_end_36(input []byte)bool{
+	return key_com_end(input,4,'oto')
+}
+
+//if
+fn basic_start_37(input []byte)bool{
+	return key_com_start(input,`i`)
+}
+fn basic_end_37(input []byte)bool{
+	return key_com_end(input,2,'f')
+}
+
+//in
+fn basic_start_38(input []byte)bool{
+	return key_com_start(input,`i`)
+}
+fn basic_end_38(input []byte)bool{
+	return key_com_end(input,2,'n')
+}
+
+//interface
+fn basic_start_39(input []byte)bool{
+	return key_com_start(input,`i`)
+}
+fn basic_end_39(input []byte)bool{
+	return key_com_end(input,9,'nterface')
+}
+
+//is
+fn basic_start_40(input []byte)bool{
+	return key_com_start(input,`i`)
+}
+fn basic_end_40(input []byte)bool{
+	return key_com_end(input,2,'s')
+}
+
+//lock
+fn basic_start_41(input []byte)bool{
+	return key_com_start(input,`l`)
+}
+fn basic_end_41(input []byte)bool{
+	return key_com_end(input,4,'ock')
+}
+
+//match
+fn basic_start_42(input []byte)bool{
+	return key_com_start(input,`m`)
+}
+fn basic_end_42(input []byte)bool{
+	return key_com_end(input,5,'atch')
+}
+
+//mut
+fn basic_start_43(input []byte)bool{
+	return key_com_start(input,`m`)
+}
+fn basic_end_43(input []byte)bool{
+	return key_com_end(input,3,'ut')
+}
+
+//none
+fn basic_start_44(input []byte)bool{
+	return key_com_start(input,`n`)
+}
+fn basic_end_44(input []byte)bool{
+	return key_com_end(input,4,'one')
+}
+
+//or
+fn basic_start_45(input []byte)bool{
+	return key_com_start(input,`o`)
+}
+fn basic_end_45(input []byte)bool{
+	return key_com_end(input,2,'r')
+}
+
+//return
+fn basic_start_46(input []byte)bool{
+	return key_com_start(input,`r`)
+}
+fn basic_end_46(input []byte)bool{
+	return key_com_end(input,6,'eturn')
+}
+
+//rlock
+fn basic_start_47(input []byte)bool{
+	return key_com_start(input,`r`)
+}
+fn basic_end_47(input []byte)bool{
+	return key_com_end(input,5,'lock')
+}
+
+//select
+fn basic_start_48(input []byte)bool{
+	return key_com_start(input,`s`)
+}
+fn basic_end_48(input []byte)bool{
+	return key_com_end(input,6,'elect')
+}
+
+//shared
+fn basic_start_49(input []byte)bool{
+	return key_com_start(input,`s`)
+}
+fn basic_end_49(input []byte)bool{
+	return key_com_end(input,6,'hared')
+}
+
+//sizeof
+fn basic_start_50(input []byte)bool{
+	return key_com_start(input,`s`)
+}
+fn basic_end_50(input []byte)bool{
+	return key_com_end(input,6,'izeof')
+}
+
+//static
+fn basic_start_51(input []byte)bool{
+	return key_com_start(input,`s`)
+}
+fn basic_end_51(input []byte)bool{
+	return key_com_end(input,6,'tatic')
+}
+
+//thread
+fn basic_start_52(input []byte)bool{
+	return key_com_start(input,`t`)
+}
+fn basic_end_52(input []byte)bool{
+	return key_com_end(input,6,'hread')
+}
+
+//true
+fn basic_start_53(input []byte)bool{
+	return key_com_start(input,`t`)
+}
+fn basic_end_53(input []byte)bool{
+	return key_com_end(input,4,'rue')
+}
+
+//type
+fn basic_start_54(input []byte)bool{
+	return key_com_start(input,`t`)
+}
+fn basic_end_54(input []byte)bool{
+	return key_com_end(input,4,'ype')
+}
+
+//typeof
+fn basic_start_55(input []byte)bool{
+	return key_com_start(input,`t`)
+}
+fn basic_end_55(input []byte)bool{
+	return key_com_end(input,6,'ypeof')
+}
+
+//volatile
+fn basic_start_56(input []byte)bool{
+	return key_com_start(input,`v`)
+}
+fn basic_end_56(input []byte)bool{
+	return key_com_end(input,8,'olatile')
+}
+
+//union
+fn basic_start_57(input []byte)bool{
+	return key_com_start(input,`u`)
+}
+fn basic_end_57(input []byte)bool{
+	return key_com_end(input,5,'nion')
+}
+
+//unsafe
+fn basic_start_58(input []byte)bool{
+	return key_com_start(input,`u`)
+}
+fn basic_end_58(input []byte)bool{
+	return key_com_end(input,6,'nsafe')
+}
+
+//__offsetof
+fn basic_start_59(input []byte)bool{
+	return key_com_start(input,`_`)
+}
+fn basic_end_59(input []byte)bool{
+	return key_com_end(input,10,'_offsetof')
+}
+
+//__global
+fn basic_start_60(input []byte)bool{
+	return key_com_start(input,`_`)
+}
+fn basic_end_60(input []byte)bool{
+	return key_com_end(input,8,'_global')
+}
+
+//<
+fn basic_start_61(input []byte)bool{
+	return key_com_start(input,`<`)
+}
+
+//>
+fn basic_start_62(input []byte)bool{
+	return key_com_start(input,`>`)
+}
+
+//rune
+fn basic_start_63(input []byte)bool{
+	for i in input{
+		if i != `\`` {  //0x60
+			return false
+		}
+	}
+	return true
+}
+fn basic_end_63(input []byte)bool{
+	return !basic_continue_string_com(input,`\``)
+}
+fn basic_continue_63(input []byte)bool{
+	return basic_continue_string_com(input,`\``)
+}
 
 //====================================================================
 //pub fn
