@@ -1,5 +1,4 @@
 module ast
 
-pub struct JsonObject{
-
+pub struct JsonObject {
 }

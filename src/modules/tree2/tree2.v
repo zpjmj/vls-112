@@ -1,6 +1,5 @@
 // module tree2
 
-
 // //二叉树
 // struct Tree2{
 // 	root int
@@ -14,7 +13,7 @@
 
 // 	if 	val <= t.root{
 // 		if left_index.len == 0{
-// 			return 
+// 			return
 // 		}
 // 		return t.left_tree.search(val)
 // 	}else{
@@ -25,13 +24,6 @@
 // 	}
 
 // }
-
-
-
-
-
-
-
 
 // pub fn
 
@@ -49,13 +41,6 @@
 // {}fn 0 15
 // ()fn 11 14
 
-
-
-
-
-
 // fn main(){ a()}
 
-// fn 
-
-
+// fn

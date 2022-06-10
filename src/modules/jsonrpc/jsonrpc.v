@@ -7,12 +7,15 @@ pub const (
 	// see http://xmlrpc-epi.sourceforge.net/specs/rfc.fault_codes.php
 	version                = '2.0'
 	parse_error            = -32700
+
 	//
 	invalid_request        = -32600
 	method_not_found       = -32601
 	invalid_params         = -32602
+
 	//
 	internal_error         = -32693
+
 	//
 	server_error_start     = -32099
 	server_not_initialized = -32002
@@ -34,24 +37,26 @@ pub:
 	id      string
 	//	error   ResponseError
 	result T
-	error   ResponseError
+	error  ResponseError
 }
 
 pub fn (resp Response<T>) json() string {
 	mut resp_wr := strings.new_builder(100)
-	defer { unsafe { resp_wr.free() } }
-	resp_wr.write_string('{"jsonrpc":"${jsonrpc.version}","id":${resp.id}')
+	defer {
+		unsafe { resp_wr.free() }
+	}
+	resp_wr.write_string('{"jsonrpc":"$jsonrpc.version","id":$resp.id')
 	if resp.id.len == 0 {
 		resp_wr.write_string('null')
 	}
 	if resp.error.code != 0 {
 		err := json.encode(resp.error)
-		resp_wr.write_string(',"error":${err}')
+		resp_wr.write_string(',"error":$err')
 	} else {
 		res := json.encode(resp.result)
-		resp_wr.write_string(',"result":${res}')
+		resp_wr.write_string(',"result":$res')
 	}
-	resp_wr.write_b(`}`)
+	resp_wr.write_u8(`}`)
 	return resp_wr.str()
 }
 

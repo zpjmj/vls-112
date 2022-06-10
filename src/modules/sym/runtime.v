@@ -5,7 +5,7 @@ import strings
 
 //运行时提供运行时必须的外部环境
 [heap]
-pub struct Runtime{
+pub struct Runtime {
 pub mut:
 	//当前的context
 	context &Context
@@ -21,7 +21,7 @@ pub mut:
 	scanner Scanner
 }
 
-pub fn (mut r Runtime) basic_symbol_type_str() string{
+pub fn (mut r Runtime) basic_symbol_type_str() string {
 	mut all_symbol := r.all_basic_symbol
 	mut sb := strings.new_builder(1000)
 	mut no := 0
@@ -30,35 +30,35 @@ pub fn (mut r Runtime) basic_symbol_type_str() string{
 	sb.write_string('\n')
 	sb.write_string('BASIC:========================================================\n')
 	no_str = ('0000' + '$no')
-	no_str = no_str[no_str.len -4 .. no_str.len] + ': '
+	no_str = no_str[no_str.len - 4..no_str.len] + ': '
 	sb.write_string(no_str)
 
-	for i,s in all_symbol{
-		if s.typ != .composite{
-			if s.typ == .undefined{
+	for i, s in all_symbol {
+		if s.typ != .composite {
+			if s.typ == .undefined {
 				sb.write_string('undefined')
-			}else{
+			} else {
 				sb.write_string(s.name)
 			}
 			sb.write_string(' ')
-			if (i+1)%10 == 0 {
+			if (i + 1) % 10 == 0 {
 				sb.write_string('\n')
-				no+=10
+				no += 10
 				no_str = ('0000' + '$no')
-				no_str = no_str[no_str.len -4 .. no_str.len] + ': '
+				no_str = no_str[no_str.len - 4..no_str.len] + ': '
 				sb.write_string(no_str)
-			} 
+			}
 		}
-
 	}
 	sb.write_string('\n')
 	sb.write_string('\n')
 	res := sb.str()
+
 	// unsafe { sb.free() }
 	return res
 }
 
-pub fn (mut r Runtime) composite_symbol_type_str() string{
+pub fn (mut r Runtime) composite_symbol_type_str() string {
 	mut all_symbol := r.all_composite_symbol
 	mut sb := strings.new_builder(1000)
 	mut no := 0
@@ -66,43 +66,41 @@ pub fn (mut r Runtime) composite_symbol_type_str() string{
 	sb.write_string('\n')
 	sb.write_string('COMPOSITE:====================================================\n')
 	no_str = ('0000' + '$no')
-	no_str = no_str[no_str.len -4 .. no_str.len] + ': '
+	no_str = no_str[no_str.len - 4..no_str.len] + ': '
 	sb.write_string(no_str)
 
-	for i,s in all_symbol{
-
-		if s.typ == .composite || s.typ == .sub_composite{
+	for i, s in all_symbol {
+		if s.typ == .composite || s.typ == .sub_composite {
 			sb.write_string(s.name)
 			sb.write_string(' ')
-			if (i+1)%10 == 0 {
+			if (i + 1) % 10 == 0 {
 				sb.write_string('\n')
-				no+=10
+				no += 10
 				no_str = ('0000' + '$no')
-				no_str = no_str[no_str.len -4 .. no_str.len] + ': '
+				no_str = no_str[no_str.len - 4..no_str.len] + ': '
 				sb.write_string(no_str)
-			} 
+			}
 		}
-
 	}
 	sb.write_string('\n')
 	sb.write_string('\n')
 	res := sb.str()
+
 	// unsafe { sb.free() }
 	return res
 }
 
-
-pub fn new_runtime(c &Context) Runtime{
+pub fn new_runtime(c &Context) Runtime {
 	return Runtime{
-		context:c
+		context: c
 	}
 }
 
 //开始解析基本符号
-pub fn (mut r Runtime) parse_basic_symbol()?{
+pub fn (mut r Runtime) parse_basic_symbol() ? {
 	mut buff := r.buff
 
-	if buff.len == 0{
+	if buff.len == 0 {
 		buff = os.read_file(r.file_path)?
 	}
 
@@ -110,23 +108,24 @@ pub fn (mut r Runtime) parse_basic_symbol()?{
 
 	r.parse_basic_symbol__()?
 }
-fn (mut r Runtime) parse_basic_symbol__()?{
-	unsafe{
-		mut scanner := &r.scanner
-		mut undefine_start:=false
-		mut undefine_start_line:=0
-		mut undefine_start_word_character:=0
-		mut undefine_start_byte_character:=0	
-		mut undefine_start_word_pos:=0
-		mut undefine_start_byte_pos:=0
-		mut start_line:=0
-		mut start_word_character:=0
-		mut start_byte_character:=0
-		mut	start_word_pos:=scanner.word_pos
-		mut	start_byte_pos:=scanner.byte_pos
 
-		for{
-	next:
+fn (mut r Runtime) parse_basic_symbol__() ? {
+	unsafe {
+		mut scanner := &r.scanner
+		mut undefine_start := false
+		mut undefine_start_line := 0
+		mut undefine_start_word_character := 0
+		mut undefine_start_byte_character := 0
+		mut undefine_start_word_pos := 0
+		mut undefine_start_byte_pos := 0
+		mut start_line := 0
+		mut start_word_character := 0
+		mut start_byte_character := 0
+		mut start_word_pos := scanner.word_pos
+		mut start_byte_pos := scanner.byte_pos
+
+		for {
+			next:
 			start_word_pos = scanner.word_pos
 			start_byte_pos = scanner.byte_pos
 			start_line = scanner.line
@@ -135,212 +134,211 @@ fn (mut r Runtime) parse_basic_symbol__()?{
 
 			word := scanner.scan()?
 
-			if scanner.is_end{
+			if scanner.is_end {
 				break
 			}
 
-			for basic_symbol_index in r.context.basic_symbol_priority_level{
+			for basic_symbol_index in r.context.basic_symbol_priority_level {
 				basic_symbol := r.context.all_basic_symbol[basic_symbol_index]
 				basic_symbol_define := basic_symbol.define
-				
-				if basic_symbol_define.is_start(word){
+
+				if basic_symbol_define.is_start(word) {
 					scanner.clean_stack()
-					if basic_symbol_define.is_fixed_length{
+					if basic_symbol_define.is_fixed_length {
 						if basic_symbol_define.len > 1 {
 							mut after_word := []byte{}
 							scanner.pushd()
-							for i:=1;i<basic_symbol_define.len + 1;i++{
+							for i := 1; i < basic_symbol_define.len + 1; i++ {
 								next_word := scanner.scan()?
-								if scanner.is_end{
+								if scanner.is_end {
 									after_word << scan_end
 									break
 								}
 								after_word << next_word
 							}
 
-							if !basic_symbol_define.is_end(after_word){
+							if !basic_symbol_define.is_end(after_word) {
 								scanner.popd()
 								continue
 							}
 							scanner.prev_scan()
 						}
 
-						if undefine_start{
+						if undefine_start {
 							r.all_basic_symbol << Symbol{
-								name:''
-								typ:.undefined
-								scanner:scanner
-								text_range:Range{
-									start:undefine_start_word_pos
-									end:start_word_pos
-									start_line:undefine_start_line
-									start_character:undefine_start_word_character
-									end_line:start_line
-									end_character:start_word_character
+								name: ''
+								typ: .undefined
+								scanner: scanner
+								text_range: Range{
+									start: undefine_start_word_pos
+									end: start_word_pos
+									start_line: undefine_start_line
+									start_character: undefine_start_word_character
+									end_line: start_line
+									end_character: start_word_character
 								}
-								byte_range:Range{
-									start:undefine_start_byte_pos
-									end:start_byte_pos
-									start_line:undefine_start_line
-									start_character:undefine_start_byte_character
-									end_line:start_line
-									end_character:start_byte_character
+								byte_range: Range{
+									start: undefine_start_byte_pos
+									end: start_byte_pos
+									start_line: undefine_start_line
+									start_character: undefine_start_byte_character
+									end_line: start_line
+									end_character: start_byte_character
 								}
-								start_index:r.all_basic_symbol.len
+								start_index: r.all_basic_symbol.len
 							}
 							undefine_start = false
 						}
 
 						r.all_basic_symbol << Symbol{
-							name:basic_symbol.name
-							typ:.basic
-							scanner:scanner
-							text_range:Range{
-								start:start_word_pos
-								end:scanner.word_pos
-								start_line:start_line
-								start_character:start_word_character
-								end_line:scanner.line
-								end_character:scanner.word_pos - scanner.prev_line_word_pos
+							name: basic_symbol.name
+							typ: .basic
+							scanner: scanner
+							text_range: Range{
+								start: start_word_pos
+								end: scanner.word_pos
+								start_line: start_line
+								start_character: start_word_character
+								end_line: scanner.line
+								end_character: scanner.word_pos - scanner.prev_line_word_pos
 							}
-							byte_range:Range{
-								start:start_byte_pos
-								end:scanner.byte_pos
-								start_line:start_line
-								start_character:start_byte_character
-								end_line:scanner.line
-								end_character:scanner.byte_pos - scanner.prev_line_byte_pos
+							byte_range: Range{
+								start: start_byte_pos
+								end: scanner.byte_pos
+								start_line: start_line
+								start_character: start_byte_character
+								end_line: scanner.line
+								end_character: scanner.byte_pos - scanner.prev_line_byte_pos
 							}
-							start_index:r.all_basic_symbol.len
+							start_index: r.all_basic_symbol.len
 						}
 						goto next
-					}else{
+					} else {
 						mut after_word := []byte{}
 						scanner.pushd()
 						for {
 							next_word := scanner.scan()?
-							if scanner.is_end{
+							if scanner.is_end {
 								after_word << scan_end
 								break
 							}
 
 							after_word << next_word
 
-							if basic_symbol_define.continue_fn_input_all{
-								if !basic_symbol_define.is_continue(after_word){
+							if basic_symbol_define.continue_fn_input_all {
+								if !basic_symbol_define.is_continue(after_word) {
 									break
 								}
-							}else{
-								if !basic_symbol_define.is_continue(next_word){
+							} else {
+								if !basic_symbol_define.is_continue(next_word) {
 									break
 								}
-							}							
+							}
 						}
 
 						scanner.prev_scan()
-						if basic_symbol_define.is_end(after_word){
-							if undefine_start{
+						if basic_symbol_define.is_end(after_word) {
+							if undefine_start {
 								r.all_basic_symbol << Symbol{
-									name:''
-									typ:.undefined
-									scanner:scanner
-									text_range:Range{
-										start:undefine_start_word_pos
-										end:start_word_pos
-										start_line:undefine_start_line
-										start_character:undefine_start_word_character
-										end_line:start_line
-										end_character:start_word_character
+									name: ''
+									typ: .undefined
+									scanner: scanner
+									text_range: Range{
+										start: undefine_start_word_pos
+										end: start_word_pos
+										start_line: undefine_start_line
+										start_character: undefine_start_word_character
+										end_line: start_line
+										end_character: start_word_character
 									}
-									byte_range:Range{
-										start:undefine_start_byte_pos
-										end:start_byte_pos
-										start_line:undefine_start_line
-										start_character:undefine_start_byte_character
-										end_line:start_line
-										end_character:start_byte_character
+									byte_range: Range{
+										start: undefine_start_byte_pos
+										end: start_byte_pos
+										start_line: undefine_start_line
+										start_character: undefine_start_byte_character
+										end_line: start_line
+										end_character: start_byte_character
 									}
-									start_index:r.all_basic_symbol.len
+									start_index: r.all_basic_symbol.len
 								}
 								undefine_start = false
 							}
 
 							r.all_basic_symbol << Symbol{
-								name:basic_symbol.name
-								typ:.basic
-								scanner:scanner
-								text_range:Range{
-									start:start_word_pos
-									end:scanner.word_pos
-									start_line:start_line
-									start_character:start_word_character
-									end_line:scanner.line
-									end_character:scanner.word_pos - scanner.prev_line_word_pos
+								name: basic_symbol.name
+								typ: .basic
+								scanner: scanner
+								text_range: Range{
+									start: start_word_pos
+									end: scanner.word_pos
+									start_line: start_line
+									start_character: start_word_character
+									end_line: scanner.line
+									end_character: scanner.word_pos - scanner.prev_line_word_pos
 								}
-								byte_range:Range{
-									start:start_byte_pos
-									end:scanner.byte_pos
-									start_line:start_line
-									start_character:start_byte_character
-									end_line:scanner.line
-									end_character:scanner.byte_pos - scanner.prev_line_byte_pos
+								byte_range: Range{
+									start: start_byte_pos
+									end: scanner.byte_pos
+									start_line: start_line
+									start_character: start_byte_character
+									end_line: scanner.line
+									end_character: scanner.byte_pos - scanner.prev_line_byte_pos
 								}
-								start_index:r.all_basic_symbol.len
+								start_index: r.all_basic_symbol.len
 							}
 							goto next
-						}else{
-
-							if basic_symbol_define.on_error_skip{
+						} else {
+							if basic_symbol_define.on_error_skip {
 								scanner.popd()
 								continue
 							}
 
-							if undefine_start{
+							if undefine_start {
 								r.all_basic_symbol << Symbol{
-									name:''
-									typ:.undefined
-									scanner:scanner
-									text_range:Range{
-										start:undefine_start_word_pos
-										end:scanner.word_pos
-										start_line:undefine_start_line
-										start_character:undefine_start_word_character
-										end_line:start_line
-										end_character:start_word_character
+									name: ''
+									typ: .undefined
+									scanner: scanner
+									text_range: Range{
+										start: undefine_start_word_pos
+										end: scanner.word_pos
+										start_line: undefine_start_line
+										start_character: undefine_start_word_character
+										end_line: start_line
+										end_character: start_word_character
 									}
-									byte_range:Range{
-										start:undefine_start_byte_pos
-										end:scanner.byte_pos
-										start_line:undefine_start_line
-										start_character:undefine_start_byte_character
-										end_line:start_line
-										end_character:start_byte_character
+									byte_range: Range{
+										start: undefine_start_byte_pos
+										end: scanner.byte_pos
+										start_line: undefine_start_line
+										start_character: undefine_start_byte_character
+										end_line: start_line
+										end_character: start_byte_character
 									}
-									start_index:r.all_basic_symbol.len
+									start_index: r.all_basic_symbol.len
 								}
 								undefine_start = false
-							}else{
+							} else {
 								r.all_basic_symbol << Symbol{
-									name:''
-									typ:.undefined
-									scanner:scanner
-									text_range:Range{
-										start:start_word_pos
-										end:scanner.word_pos
-										start_line:start_line
-										start_character:start_word_character
-										end_line:scanner.line
-										end_character:scanner.word_pos - scanner.prev_line_word_pos
+									name: ''
+									typ: .undefined
+									scanner: scanner
+									text_range: Range{
+										start: start_word_pos
+										end: scanner.word_pos
+										start_line: start_line
+										start_character: start_word_character
+										end_line: scanner.line
+										end_character: scanner.word_pos - scanner.prev_line_word_pos
 									}
-									byte_range:Range{
-										start:start_byte_pos
-										end:scanner.byte_pos
-										start_line:start_line
-										start_character:start_byte_character
-										end_line:scanner.line
-										end_character:scanner.byte_pos - scanner.prev_line_byte_pos
+									byte_range: Range{
+										start: start_byte_pos
+										end: scanner.byte_pos
+										start_line: start_line
+										start_character: start_byte_character
+										end_line: scanner.line
+										end_character: scanner.byte_pos - scanner.prev_line_byte_pos
 									}
-									start_index:r.all_basic_symbol.len
+									start_index: r.all_basic_symbol.len
 								}
 							}
 							goto next
@@ -349,7 +347,7 @@ fn (mut r Runtime) parse_basic_symbol__()?{
 				}
 			}
 
-			if !undefine_start{		
+			if !undefine_start {
 				undefine_start_word_pos = start_word_pos
 				undefine_start_byte_pos = start_byte_pos
 				undefine_start_line = start_line
@@ -360,26 +358,24 @@ fn (mut r Runtime) parse_basic_symbol__()?{
 		}
 		scanner.clean_stack()
 	}
-
 }
 
 //开始解析组合符号
-pub fn (mut r Runtime) parse_composite_symbol()?{
-	r.parse_composite_symbol__() or {
-		return
-	}
+pub fn (mut r Runtime) parse_composite_symbol() ? {
+	r.parse_composite_symbol__() or { return }
 }
-fn (mut r Runtime) parse_composite_symbol__()?{
+
+fn (mut r Runtime) parse_composite_symbol__() ? {
 	len := r.all_basic_symbol.len
 
-	for index := 0;index < len;index++{
+	for index := 0; index < len; index++ {
 		basic_symbol := r.all_basic_symbol[index]?
-	
-		for composite_symbol_index in r.context.composite_symbol_priority_level{
+
+		for composite_symbol_index in r.context.composite_symbol_priority_level {
 			composite_symbol := &r.context.all_composite_symbol[composite_symbol_index]
 			mut composite_symbol_define := &composite_symbol.define
-			
-			if composite_symbol_define.is_start(basic_symbol){
+
+			if composite_symbol_define.is_start(basic_symbol) {
 				mut next_basic_symbol := basic_symbol
 				mut next_index := index + 1
 				mut match_flg := false
@@ -388,18 +384,19 @@ fn (mut r Runtime) parse_composite_symbol__()?{
 
 				for {
 					next_basic_symbol = r.all_basic_symbol[next_index]?
-					flg,symbol_step,match_fn_step,tier_tmp := composite_symbol_define.can_continue(next_basic_symbol,tier,mut scope_index_arr)	
+					flg, symbol_step, match_fn_step, tier_tmp := composite_symbol_define.can_continue(next_basic_symbol,
+						tier, mut scope_index_arr)
 					tier = tier_tmp
 
-					if flg && symbol_step == 0 && match_fn_step==0{
+					if flg && symbol_step == 0 && match_fn_step == 0 {
 						break
 					}
 
 					next_index += symbol_step
-					composite_symbol_define.match_fn_index+=match_fn_step
+					composite_symbol_define.match_fn_index += match_fn_step
 
-					if !flg{
-						if composite_symbol_define.match_fn_index == composite_symbol_define.match_fn_arr.len - 1{	
+					if !flg {
+						if composite_symbol_define.match_fn_index == composite_symbol_define.match_fn_arr.len - 1 {
 							match_flg = true
 						}
 
@@ -408,7 +405,7 @@ fn (mut r Runtime) parse_composite_symbol__()?{
 						break
 					}
 
-					if composite_symbol_define.match_fn_index == composite_symbol_define.match_fn_arr.len{
+					if composite_symbol_define.match_fn_index == composite_symbol_define.match_fn_arr.len {
 						composite_symbol_define.match_fn_index = 0
 						composite_symbol_define.can_continue = composite_symbol_define.match_fn_arr[0]
 						break
@@ -417,30 +414,30 @@ fn (mut r Runtime) parse_composite_symbol__()?{
 					composite_symbol_define.can_continue = composite_symbol_define.match_fn_arr[composite_symbol_define.match_fn_index]
 				}
 
-				if match_flg{
+				if match_flg {
 					r.all_composite_symbol << Symbol{
-						name:composite_symbol.name
-						typ:.composite
-						scanner:basic_symbol.scanner
-						text_range:Range{
-							start:basic_symbol.text_range.start
-							end:next_basic_symbol.text_range.end
-							start_line:basic_symbol.text_range.start_line
-							start_character:basic_symbol.text_range.start_character
-							end_line:next_basic_symbol.text_range.end_line
-							end_character:next_basic_symbol.text_range.end_character
+						name: composite_symbol.name
+						typ: .composite
+						scanner: basic_symbol.scanner
+						text_range: Range{
+							start: basic_symbol.text_range.start
+							end: next_basic_symbol.text_range.end
+							start_line: basic_symbol.text_range.start_line
+							start_character: basic_symbol.text_range.start_character
+							end_line: next_basic_symbol.text_range.end_line
+							end_character: next_basic_symbol.text_range.end_character
 						}
-						byte_range:Range{
-							start:basic_symbol.byte_range.start
-							end:next_basic_symbol.byte_range.end
-							start_line:basic_symbol.byte_range.start_line
-							start_character:basic_symbol.byte_range.start_character
-							end_line:next_basic_symbol.byte_range.end_line
-							end_character:next_basic_symbol.byte_range.end_character
+						byte_range: Range{
+							start: basic_symbol.byte_range.start
+							end: next_basic_symbol.byte_range.end
+							start_line: basic_symbol.byte_range.start_line
+							start_character: basic_symbol.byte_range.start_character
+							end_line: next_basic_symbol.byte_range.end_line
+							end_character: next_basic_symbol.byte_range.end_character
 						}
-						start_index:index
-						end_index:next_index
-						scope:scope_index_arr
+						start_index: index
+						end_index: next_index
+						scope: scope_index_arr
 					}
 					index = next_index
 				}
@@ -450,23 +447,20 @@ fn (mut r Runtime) parse_composite_symbol__()?{
 }
 
 //开始解析组合符号_scope
-pub fn (mut r Runtime) parse_sub_composite_symbol()?{
-	r.parse_sub_composite_symbol__() or {
-		return
-	}
+pub fn (mut r Runtime) parse_sub_composite_symbol() ? {
+	r.parse_sub_composite_symbol__() or { return }
 }
 
-fn (mut r Runtime) parse_sub_composite_symbol__()?{
-
-	for sub_symbol_index in r.context.sub_composite_symbol_priority_level{
+fn (mut r Runtime) parse_sub_composite_symbol__() ? {
+	for sub_symbol_index in r.context.sub_composite_symbol_priority_level {
 		sub_symbol := &r.context.all_sub_composite_symbol[sub_symbol_index]
-		
-		for composite_symbol in r.all_composite_symbol{
-			if composite_symbol.name !in sub_symbol.parent{
+
+		for composite_symbol in r.all_composite_symbol {
+			if composite_symbol.name !in sub_symbol.parent {
 				continue
 			}
 
-			if composite_symbol.name !in sub_symbol.scope_index{
+			if composite_symbol.name !in sub_symbol.scope_index {
 				continue
 			}
 
@@ -474,45 +468,46 @@ fn (mut r Runtime) parse_sub_composite_symbol__()?{
 			mut basic_start_index := 0
 			mut basic_end_index := 0
 
-			if scope_index.len == 0{
-
-				for i:=0;i<composite_symbol.scope.len - 1;i+=2{
+			if scope_index.len == 0 {
+				for i := 0; i < composite_symbol.scope.len - 1; i += 2 {
 					basic_start_index = composite_symbol.scope[i]
-					basic_end_index = composite_symbol.scope[i+1]
-					r.parse_single_sub_composite_symbol__(basic_start_index,basic_end_index,&sub_symbol.composite_symbol)?
+					basic_end_index = composite_symbol.scope[i + 1]
+					r.parse_single_sub_composite_symbol__(basic_start_index, basic_end_index,
+						&sub_symbol.composite_symbol)?
 				}
-
-			}else{
-				for i in scope_index{
+			} else {
+				for i in scope_index {
 					mut si := i * 2
 					mut si_2 := si + 1
 
-					if i < 0{
+					if i < 0 {
 						si = composite_symbol.scope.len + si
 						si_2 = composite_symbol.scope.len + si_2
 					}
 
-					if si_2 >= composite_symbol.scope.len{
+					if si_2 >= composite_symbol.scope.len {
 						continue
 					}
 
 					basic_start_index = composite_symbol.scope[si]
 					basic_end_index = composite_symbol.scope[si_2]
 
-					r.parse_single_sub_composite_symbol__(basic_start_index,basic_end_index,&sub_symbol.composite_symbol)?
+					r.parse_single_sub_composite_symbol__(basic_start_index, basic_end_index,
+						&sub_symbol.composite_symbol)?
 				}
 			}
 		}
 	}
 }
 
-fn (mut r Runtime) parse_single_sub_composite_symbol__(basic_start_index int,basic_end_index int,composite_symbol &CompositeSymbol)?{
-	for index := basic_start_index + 1;index < basic_end_index;index++{
+fn (mut r Runtime) parse_single_sub_composite_symbol__(basic_start_index int, basic_end_index int, composite_symbol &CompositeSymbol) ? {
+	for index := basic_start_index + 1; index < basic_end_index; index++ {
 		basic_symbol := r.all_basic_symbol[index]?
-		//composite_symbol := c_symbol
+
+		// composite_symbol := c_symbol
 		mut composite_symbol_define := &composite_symbol.define
-		
-		if composite_symbol_define.is_start(basic_symbol){
+
+		if composite_symbol_define.is_start(basic_symbol) {
 			mut next_basic_symbol := basic_symbol
 			mut next_index := index + 1
 			mut match_flg := false
@@ -521,18 +516,19 @@ fn (mut r Runtime) parse_single_sub_composite_symbol__(basic_start_index int,bas
 
 			for {
 				next_basic_symbol = r.all_basic_symbol[next_index]?
-				flg,symbol_step,match_fn_step,tier_tmp := composite_symbol_define.can_continue(next_basic_symbol,tier,mut scope_index_arr)	
+				flg, symbol_step, match_fn_step, tier_tmp := composite_symbol_define.can_continue(next_basic_symbol,
+					tier, mut scope_index_arr)
 				tier = tier_tmp
 
-				if flg && symbol_step == 0 && match_fn_step==0{
+				if flg && symbol_step == 0 && match_fn_step == 0 {
 					break
 				}
 
 				next_index += symbol_step
-				composite_symbol_define.match_fn_index+=match_fn_step
+				composite_symbol_define.match_fn_index += match_fn_step
 
-				if !flg{
-					if composite_symbol_define.match_fn_index == composite_symbol_define.match_fn_arr.len - 1{	
+				if !flg {
+					if composite_symbol_define.match_fn_index == composite_symbol_define.match_fn_arr.len - 1 {
 						match_flg = true
 					}
 
@@ -541,7 +537,7 @@ fn (mut r Runtime) parse_single_sub_composite_symbol__(basic_start_index int,bas
 					break
 				}
 
-				if composite_symbol_define.match_fn_index == composite_symbol_define.match_fn_arr.len{
+				if composite_symbol_define.match_fn_index == composite_symbol_define.match_fn_arr.len {
 					composite_symbol_define.match_fn_index = 0
 					composite_symbol_define.can_continue = composite_symbol_define.match_fn_arr[0]
 					break
@@ -550,76 +546,76 @@ fn (mut r Runtime) parse_single_sub_composite_symbol__(basic_start_index int,bas
 				composite_symbol_define.can_continue = composite_symbol_define.match_fn_arr[composite_symbol_define.match_fn_index]
 			}
 
-			if match_flg{
+			if match_flg {
 				r.all_composite_symbol << Symbol{
-					name:composite_symbol.name
-					typ:.sub_composite
-					scanner:basic_symbol.scanner
-					text_range:Range{
-						start:basic_symbol.text_range.start
-						end:next_basic_symbol.text_range.end
-						start_line:basic_symbol.text_range.start_line
-						start_character:basic_symbol.text_range.start_character
-						end_line:next_basic_symbol.text_range.end_line
-						end_character:next_basic_symbol.text_range.end_character
+					name: composite_symbol.name
+					typ: .sub_composite
+					scanner: basic_symbol.scanner
+					text_range: Range{
+						start: basic_symbol.text_range.start
+						end: next_basic_symbol.text_range.end
+						start_line: basic_symbol.text_range.start_line
+						start_character: basic_symbol.text_range.start_character
+						end_line: next_basic_symbol.text_range.end_line
+						end_character: next_basic_symbol.text_range.end_character
 					}
-					byte_range:Range{
-						start:basic_symbol.byte_range.start
-						end:next_basic_symbol.byte_range.end
-						start_line:basic_symbol.byte_range.start_line
-						start_character:basic_symbol.byte_range.start_character
-						end_line:next_basic_symbol.byte_range.end_line
-						end_character:next_basic_symbol.byte_range.end_character
+					byte_range: Range{
+						start: basic_symbol.byte_range.start
+						end: next_basic_symbol.byte_range.end
+						start_line: basic_symbol.byte_range.start_line
+						start_character: basic_symbol.byte_range.start_character
+						end_line: next_basic_symbol.byte_range.end_line
+						end_character: next_basic_symbol.byte_range.end_character
 					}
-					start_index:index
-					end_index:next_index
-					scope:scope_index_arr
+					start_index: index
+					end_index: next_index
+					scope: scope_index_arr
 				}
 				index = next_index
 			}
-		}	
+		}
 	}
 }
 
-pub fn (r Runtime) get_fn_name(c_symbol Symbol)string{
-	if c_symbol.start_index < 0 || c_symbol.start_index >= r.all_basic_symbol.len{
+pub fn (r Runtime) get_fn_name(c_symbol Symbol) string {
+	if c_symbol.start_index < 0 || c_symbol.start_index >= r.all_basic_symbol.len {
 		return ''
 	}
 
-	if c_symbol.end_index < 0 || c_symbol.end_index >= r.all_basic_symbol.len{
+	if c_symbol.end_index < 0 || c_symbol.end_index >= r.all_basic_symbol.len {
 		return ''
 	}
 
-	if !(c_symbol.name == '{}fn' || c_symbol.name == '{}pub_fn'){
+	if !(c_symbol.name == '{}fn' || c_symbol.name == '{}pub_fn') {
 		return ''
-	}	
+	}
 
-	for i:=c_symbol.start_index;i<=c_symbol.end_index;i++{
+	for i := c_symbol.start_index; i <= c_symbol.end_index; i++ {
 		b_symbol := r.all_basic_symbol[i]
-		if b_symbol.name == 'fn'{
-			return r.all_basic_symbol[i+2].get_text()
+		if b_symbol.name == 'fn' {
+			return r.all_basic_symbol[i + 2].get_text()
 		}
 	}
 	return ''
 }
 
-pub fn (r Runtime) get_fn_symbol(c_symbol Symbol)Symbol{
-	if c_symbol.start_index < 0 || c_symbol.start_index >= r.all_basic_symbol.len{
+pub fn (r Runtime) get_fn_symbol(c_symbol Symbol) Symbol {
+	if c_symbol.start_index < 0 || c_symbol.start_index >= r.all_basic_symbol.len {
 		return new_empty_symbol()
 	}
 
-	if c_symbol.end_index < 0 || c_symbol.end_index >= r.all_basic_symbol.len{
+	if c_symbol.end_index < 0 || c_symbol.end_index >= r.all_basic_symbol.len {
 		return new_empty_symbol()
 	}
 
-	if !(c_symbol.name == '{}fn' || c_symbol.name == '{}pub_fn'){
+	if !(c_symbol.name == '{}fn' || c_symbol.name == '{}pub_fn') {
 		return new_empty_symbol()
-	}	
+	}
 
-	for i:=c_symbol.start_index;i<=c_symbol.end_index;i++{
+	for i := c_symbol.start_index; i <= c_symbol.end_index; i++ {
 		b_symbol := r.all_basic_symbol[i]
-		if b_symbol.name == 'fn'{
-			return r.all_basic_symbol[i+2]
+		if b_symbol.name == 'fn' {
+			return r.all_basic_symbol[i + 2]
 		}
 	}
 	return new_empty_symbol()

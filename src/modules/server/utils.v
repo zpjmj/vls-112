@@ -18,11 +18,12 @@ enum MessageType {
 
 fn (mut ls Vls112) notify<T>(data jsonrpc.NotificationMessage<T>) {
 	str := json.encode(data)
-	//ls.logger.in
+
+	// ls.logger.in
 	ls.io.send(str)
 }
 
-fn (mut ls Vls112) show_message(m string,mlv MessageType){
+fn (mut ls Vls112) show_message(m string, mlv MessageType) {
 	ls.notify(jsonrpc.NotificationMessage<ShowMessageParams>{
 		method: 'window/showMessage'
 		params: ShowMessageParams{
@@ -32,17 +33,17 @@ fn (mut ls Vls112) show_message(m string,mlv MessageType){
 	})
 }
 
-fn (mut ls Vls112) send<T>(resp jsonrpc.Response<T>)? {
+fn (mut ls Vls112) send<T>(resp jsonrpc.Response<T>) ? {
 	str := resp.json()
-	ls.logger.info('new response -->',1)?
-	ls.logger.text(str,1,'\t')?
+	ls.logger.info('new response -->', 1)?
+	ls.logger.text(str, 1, '\t')?
 	ls.io.send(str)
 }
 
-fn (mut ls Vls112) send_null(id string)? {
-	str := '{"jsonrpc":"${jsonrpc.version}","id":$id,"result":null}'
-	ls.logger.info('new response -->',1)?
-	ls.logger.text(str,1,'\t')?
+fn (mut ls Vls112) send_null(id string) ? {
+	str := '{"jsonrpc":"$jsonrpc.version","id":$id,"result":null}'
+	ls.logger.info('new response -->', 1)?
+	ls.logger.text(str, 1, '\t')?
 	ls.io.send(str)
 }
 
@@ -55,7 +56,7 @@ fn new_error(code int, id string) jsonrpc.Response<string> {
 }
 
 [inline]
-fn uri_to_path(uri string) string{
+fn uri_to_path(uri string) string {
 	$if windows {
 		if uri.contains('%3A') {
 			return uri.all_after('file:///').replace_each(['/', '\\', '%3A', ':'])
@@ -63,5 +64,3 @@ fn uri_to_path(uri string) string{
 	}
 	return if uri.starts_with('file://') { uri.all_after('file://') } else { '' }
 }
-
-

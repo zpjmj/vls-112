@@ -1,8 +1,6 @@
+fn main() {
+	a()
+}
 
-
-fn main(){ a()}
-
-
-fn a(){
-    
+fn a() {
 }

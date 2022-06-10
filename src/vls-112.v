@@ -1,4 +1,5 @@
 module main
+
 import os
 import cli
 import server
@@ -48,30 +49,29 @@ fn main() {
 			flag: .string
 			name: 'vexe'
 			description: 'Default: VEXE: ' + @VEXE
-		}
+		},
 	])
 
-	cmd.parse(os.args)	
+	cmd.parse(os.args)
 }
-
 
 fn parse_cli(cmd cli.Command) ? {
 	debug_mode := cmd.flags.get_bool('debug') or { false }
 	default_loglv := '1000000000'
 	mut loglv := cmd.flags.get_string('loglv') or { default_loglv }
 	mut vexe := cmd.flags.get_string('vexe') or { @VEXE }
-	if vexe.trim_space() == ''{
+	if vexe.trim_space() == '' {
 		vexe = @VEXE
 	}
 
 	if loglv.len >= default_loglv.len || loglv == '' {
 		loglv = default_loglv
-	}else{
+	} else {
 		loglv = (loglv + '0000000000')[0..10]
 	}
 
-	//socket_mode := cmd.flags.get_bool('socket') or { false }
-	//socket_port := cmd.flags.get_int('port') or { '5008' }
+	// socket_mode := cmd.flags.get_bool('socket') or { false }
+	// socket_port := cmd.flags.get_int('port') or { '5008' }
 
 	// Setup the comm method and build the language server.
 	// mut io := if socket_mode {
@@ -80,9 +80,11 @@ fn parse_cli(cmd cli.Command) ? {
 	// 	server.ReceiveSender(Stdio{ debug: debug_mode })
 	// }
 
-	mut io := server.ReceiveSender(vlsio.Stdio{ debug: debug_mode })
+	mut io := server.ReceiveSender(vlsio.Stdio{
+		debug: debug_mode
+	})
 
-	mut ls := server.new(io,loglv,vexe)
+	mut ls := server.new(io, loglv, vexe)
 
 	ls.start_parse_loop()
 }

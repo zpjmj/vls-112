@@ -1,6 +1,6 @@
 module json112
 
-struct Unicode{
+struct Unicode {
 mut:
 	//码点
 	code_point u32
