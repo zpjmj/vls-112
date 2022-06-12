@@ -4,7 +4,6 @@ import os
 import cli
 import server
 import server.meta
-import vlsio
 
 fn C._setmode(int, int)
 
@@ -80,11 +79,7 @@ fn parse_cli(cmd cli.Command) ? {
 	// 	server.ReceiveSender(Stdio{ debug: debug_mode })
 	// }
 
-	mut io := server.ReceiveSender(vlsio.Stdio{
-		debug: debug_mode
-	})
-
-	mut ls := server.new(io, loglv, vexe)
+	mut ls := server.new(debug_mode, loglv, vexe)
 
 	ls.start_parse_loop()
 }

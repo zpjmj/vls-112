@@ -411,15 +411,15 @@ fn empty_fn_symbol(input sym.Symbol) bool {
 	return false
 }
 
-fn empty_fn_byte(input []byte) bool {
+fn empty_fn_byte(input []u8) bool {
 	return false
 }
 
-fn empty_fn_byte2(input []byte) bool {
+fn empty_fn_byte2(input []u8) bool {
 	return true
 }
 
-fn key_com_start(input []byte, key byte) bool {
+fn key_com_start(input []u8, key u8) bool {
 	if input.len > 0 {
 		if input[0] == key {
 			return true
@@ -428,7 +428,7 @@ fn key_com_start(input []byte, key byte) bool {
 	return false
 }
 
-fn key_com_end(input []byte, len int, match_str string) bool {
+fn key_com_end(input []u8, len int, match_str string) bool {
 	if input.len == len {
 		for i, s in match_str {
 			if input[i] != s {
@@ -450,7 +450,7 @@ fn key_com_end(input []byte, len int, match_str string) bool {
 }
 
 // ws
-fn basic_start_01(input []byte) bool {
+fn basic_start_01(input []u8) bool {
 	for i in input {
 		if i !in vlang.all_ws {
 			return false
@@ -459,11 +459,11 @@ fn basic_start_01(input []byte) bool {
 	return true
 }
 
-fn basic_end_01(input []byte) bool {
+fn basic_end_01(input []u8) bool {
 	return true
 }
 
-fn basic_continue_01(input []byte) bool {
+fn basic_continue_01(input []u8) bool {
 	for i in input {
 		if i !in vlang.all_ws {
 			return false
@@ -473,86 +473,86 @@ fn basic_continue_01(input []byte) bool {
 }
 
 // import
-fn basic_start_02(input []byte) bool {
+fn basic_start_02(input []u8) bool {
 	return key_com_start(input, `i`)
 }
 
-fn basic_end_02(input []byte) bool {
+fn basic_end_02(input []u8) bool {
 	return key_com_end(input, 6, 'mport')
 }
 
 // pub
-fn basic_start_03(input []byte) bool {
+fn basic_start_03(input []u8) bool {
 	return key_com_start(input, `p`)
 }
 
-fn basic_end_03(input []byte) bool {
+fn basic_end_03(input []u8) bool {
 	return key_com_end(input, 3, 'ub')
 }
 
 // struct
-fn basic_start_04(input []byte) bool {
+fn basic_start_04(input []u8) bool {
 	return key_com_start(input, `s`)
 }
 
-fn basic_end_04(input []byte) bool {
+fn basic_end_04(input []u8) bool {
 	return key_com_end(input, 6, 'truct')
 }
 
 // fn
-fn basic_start_05(input []byte) bool {
+fn basic_start_05(input []u8) bool {
 	return key_com_start(input, `f`)
 }
 
-fn basic_end_05(input []byte) bool {
+fn basic_end_05(input []u8) bool {
 	return key_com_end(input, 2, 'n')
 }
 
 //.
-fn basic_start_06(input []byte) bool {
+fn basic_start_06(input []u8) bool {
 	return key_com_start(input, `.`)
 }
 
 //{
-fn basic_start_07(input []byte) bool {
+fn basic_start_07(input []u8) bool {
 	return key_com_start(input, `{`)
 }
 
 //}
-fn basic_start_08(input []byte) bool {
+fn basic_start_08(input []u8) bool {
 	return key_com_start(input, `}`)
 }
 
 //(
-fn basic_start_09(input []byte) bool {
+fn basic_start_09(input []u8) bool {
 	return key_com_start(input, `(`)
 }
 
 //)
-fn basic_start_10(input []byte) bool {
+fn basic_start_10(input []u8) bool {
 	return key_com_start(input, `)`)
 }
 
 //:=
-fn basic_start_11(input []byte) bool {
+fn basic_start_11(input []u8) bool {
 	return key_com_start(input, `:`)
 }
 
-fn basic_end_11(input []byte) bool {
+fn basic_end_11(input []u8) bool {
 	return key_com_end(input, 2, '=')
 }
 
 // module
-fn basic_start_12(input []byte) bool {
+fn basic_start_12(input []u8) bool {
 	return key_com_start(input, `m`)
 }
 
-fn basic_end_12(input []byte) bool {
+fn basic_end_12(input []u8) bool {
 	return key_com_end(input, 6, 'odule')
 }
 
 // name
-fn basic_start_13(input []byte) bool {
+fn basic_start_13(input []u8) bool {
 	for i in input {
 		if !((i > 0x40 && i < 0x5b) || (i > 0x60 && i < 0x7b) || i == 0x5f) {
 			return false
@@ -561,11 +561,11 @@ fn basic_start_13(input []byte) bool {
 	return true
 }
 
-fn basic_end_13(input []byte) bool {
+fn basic_end_13(input []u8) bool {
 	return true
 }
 
-fn basic_continue_13(input []byte) bool {
+fn basic_continue_13(input []u8) bool {
 	for i in input {
 		if !((i > 0x2f && i < 0x3a) || (i > 0x40 && i < 0x5b)
 			|| (i > 0x60 && i < 0x7b) || (i == 0x5f)) {
@@ -576,7 +576,7 @@ fn basic_continue_13(input []byte) bool {
 }
 
 // comment
-fn basic_start_14(input []byte) bool {
+fn basic_start_14(input []u8) bool {
 	for i in input {
 		if i != `/` {
 			return false
@@ -585,15 +585,15 @@ fn basic_start_14(input []byte) bool {
 	return true
 }
 
-fn basic_end_14(input []byte) bool {
+fn basic_end_14(input []u8) bool {
 	return !basic_continue_end_14_com(input, true)
 }
 
-fn basic_continue_14(input []byte) bool {
+fn basic_continue_14(input []u8) bool {
 	return basic_continue_end_14_com(input, false)
 }
 
-fn basic_continue_end_14_com(input []byte, flg bool) bool {
+fn basic_continue_end_14_com(input []u8, flg bool) bool {
 	if input[0] == `/` {
 		if input.len == 2 {
 			if input[input.len - 1] == sym.scan_end {
@@ -613,7 +613,7 @@ fn basic_continue_end_14_com(input []byte, flg bool) bool {
 
 				for i := 1; i < input.len; i++ {
 					first_byte := input[i]
-					mut second_byte := byte(0b0)
+					mut second_byte := u8(0b0)
 					if i + 1 < input.len {
 						second_byte = input[i + 1]
 					}
@@ -640,7 +640,7 @@ fn basic_continue_end_14_com(input []byte, flg bool) bool {
 }
 
 // string
-fn basic_continue_string_com(input []byte, quotes byte) bool {
+fn basic_continue_string_com(input []u8, quotes u8) bool {
 	if input.len > 1 {
 		if input[input.len - 2] == quotes {
 			if input.len > 2 {
@@ -670,7 +670,7 @@ fn basic_continue_string_com(input []byte, quotes byte) bool {
 }
 
 // string_single_quotes
-fn basic_start_15(input []byte) bool {
+fn basic_start_15(input []u8) bool {
 	for i in input {
 		if i != `'` {
 			return false
@@ -679,16 +679,16 @@ fn basic_start_15(input []byte) bool {
 	return true
 }
 
-fn basic_end_15(input []byte) bool {
+fn basic_end_15(input []u8) bool {
 	return !basic_continue_string_com(input, `'`)
 }
 
-fn basic_continue_15(input []byte) bool {
+fn basic_continue_15(input []u8) bool {
 	return basic_continue_string_com(input, `'`)
 }
 
 // string_double_quotes
-fn basic_start_16(input []byte) bool {
+fn basic_start_16(input []u8) bool {
 	for i in input {
 		if i != `"` {
 			return false
@@ -697,41 +697,41 @@ fn basic_start_16(input []byte) bool {
 	return true
 }
 
-fn basic_end_16(input []byte) bool {
+fn basic_end_16(input []u8) bool {
 	return !basic_continue_string_com(input, `"`)
 }
 
-fn basic_continue_16(input []byte) bool {
+fn basic_continue_16(input []u8) bool {
 	return basic_continue_string_com(input, `"`)
 }
 
 // as
-fn basic_start_17(input []byte) bool {
+fn basic_start_17(input []u8) bool {
 	return key_com_start(input, `a`)
 }
 
-fn basic_end_17(input []byte) bool {
+fn basic_end_17(input []u8) bool {
 	return key_com_end(input, 2, 's')
 }
 
 //,
-fn basic_start_18(input []byte) bool {
+fn basic_start_18(input []u8) bool {
 	return key_com_start(input, `,`)
 }
 
 //[
-fn basic_start_19(input []byte) bool {
+fn basic_start_19(input []u8) bool {
 	return key_com_start(input, `[`)
 }
 
 //]
-fn basic_start_20(input []byte) bool {
+fn basic_start_20(input []u8) bool {
 	return key_com_start(input, `]`)
 }
 
 // real_string_single_quotes
 // real_string_double_quotes
-fn real_string_com_end(input []byte, quotes byte) bool {
+fn real_string_com_end(input []u8, quotes u8) bool {
 	if _likely_(input.len > 2) {
 		if input[0] != quotes {
 			return false
@@ -746,7 +746,7 @@ fn real_string_com_end(input []byte, quotes byte) bool {
 	return false
 }
 
-fn real_string_com_continue(input []byte, quotes byte) bool {
+fn real_string_com_continue(input []u8, quotes u8) bool {
 	if input[input.len - 1] == sym.scan_end {
 		return false
 	}
@@ -764,7 +764,7 @@ fn real_string_com_continue(input []byte, quotes byte) bool {
 	return true
 }
 
-fn basic_start_21(input []byte) bool {
+fn basic_start_21(input []u8) bool {
 	for i in input {
 		if i != `r` {
 			return false
@@ -773,7 +773,7 @@ fn basic_start_21(input []byte) bool {
 	return true
 }
 
-fn basic_start_22(input []byte) bool {
+fn basic_start_22(input []u8) bool {
 	for i in input {
 		if i != `r` {
 			return false
@@ -782,376 +782,376 @@ fn basic_start_22(input []byte) bool {
 	return true
 }
 
-fn basic_end_21(input []byte) bool {
+fn basic_end_21(input []u8) bool {
 	return real_string_com_end(input, `'`)
 }
 
-fn basic_end_22(input []byte) bool {
+fn basic_end_22(input []u8) bool {
 	return real_string_com_end(input, `"`)
 }
 
-fn basic_continue_21(input []byte) bool {
+fn basic_continue_21(input []u8) bool {
 	return real_string_com_continue(input, `'`)
 }
 
-fn basic_continue_22(input []byte) bool {
+fn basic_continue_22(input []u8) bool {
 	return real_string_com_continue(input, `"`)
 }
 
 // asm
-fn basic_start_23(input []byte) bool {
+fn basic_start_23(input []u8) bool {
 	return key_com_start(input, `a`)
 }
 
-fn basic_end_23(input []byte) bool {
+fn basic_end_23(input []u8) bool {
 	return key_com_end(input, 3, 'sm')
 }
 
 // assert
-fn basic_start_24(input []byte) bool {
+fn basic_start_24(input []u8) bool {
 	return key_com_start(input, `a`)
 }
 
-fn basic_end_24(input []byte) bool {
+fn basic_end_24(input []u8) bool {
 	return key_com_end(input, 6, 'ssert')
 }
 
 // atomic
-fn basic_start_25(input []byte) bool {
+fn basic_start_25(input []u8) bool {
 	return key_com_start(input, `a`)
 }
 
-fn basic_end_25(input []byte) bool {
+fn basic_end_25(input []u8) bool {
 	return key_com_end(input, 6, 'tomic')
 }
 
 // break
-fn basic_start_26(input []byte) bool {
+fn basic_start_26(input []u8) bool {
 	return key_com_start(input, `b`)
 }
 
-fn basic_end_26(input []byte) bool {
+fn basic_end_26(input []u8) bool {
 	return key_com_end(input, 5, 'reak')
 }
 
 // chan
-fn basic_start_27(input []byte) bool {
+fn basic_start_27(input []u8) bool {
 	return key_com_start(input, `c`)
 }
 
-fn basic_end_27(input []byte) bool {
+fn basic_end_27(input []u8) bool {
 	return key_com_end(input, 4, 'han')
 }
 
 // const
-fn basic_start_28(input []byte) bool {
+fn basic_start_28(input []u8) bool {
 	return key_com_start(input, `c`)
 }
 
-fn basic_end_28(input []byte) bool {
+fn basic_end_28(input []u8) bool {
 	return key_com_end(input, 5, 'onst')
 }
 
 // continue
-fn basic_start_29(input []byte) bool {
+fn basic_start_29(input []u8) bool {
 	return key_com_start(input, `c`)
 }
 
-fn basic_end_29(input []byte) bool {
+fn basic_end_29(input []u8) bool {
 	return key_com_end(input, 8, 'ontinue')
 }
 
 // defer
-fn basic_start_30(input []byte) bool {
+fn basic_start_30(input []u8) bool {
 	return key_com_start(input, `d`)
 }
 
-fn basic_end_30(input []byte) bool {
+fn basic_end_30(input []u8) bool {
 	return key_com_end(input, 5, 'efer')
 }
 
 // else
-fn basic_start_31(input []byte) bool {
+fn basic_start_31(input []u8) bool {
 	return key_com_start(input, `e`)
 }
 
-fn basic_end_31(input []byte) bool {
+fn basic_end_31(input []u8) bool {
 	return key_com_end(input, 4, 'lse')
 }
 
 // enum
-fn basic_start_32(input []byte) bool {
+fn basic_start_32(input []u8) bool {
 	return key_com_start(input, `e`)
 }
 
-fn basic_end_32(input []byte) bool {
+fn basic_end_32(input []u8) bool {
 	return key_com_end(input, 4, 'num')
 }
 
 // false
-fn basic_start_33(input []byte) bool {
+fn basic_start_33(input []u8) bool {
 	return key_com_start(input, `f`)
 }
 
-fn basic_end_33(input []byte) bool {
+fn basic_end_33(input []u8) bool {
 	return key_com_end(input, 5, 'alse')
 }
 
 // for
-fn basic_start_34(input []byte) bool {
+fn basic_start_34(input []u8) bool {
 	return key_com_start(input, `f`)
 }
 
-fn basic_end_34(input []byte) bool {
+fn basic_end_34(input []u8) bool {
 	return key_com_end(input, 3, 'or')
 }
 
 // go
-fn basic_start_35(input []byte) bool {
+fn basic_start_35(input []u8) bool {
 	return key_com_start(input, `g`)
 }
 
-fn basic_end_35(input []byte) bool {
+fn basic_end_35(input []u8) bool {
 	return key_com_end(input, 2, 'o')
 }
 
 // goto
-fn basic_start_36(input []byte) bool {
+fn basic_start_36(input []u8) bool {
 	return key_com_start(input, `g`)
 }
 
-fn basic_end_36(input []byte) bool {
+fn basic_end_36(input []u8) bool {
 	return key_com_end(input, 4, 'oto')
 }
 
 // if
-fn basic_start_37(input []byte) bool {
+fn basic_start_37(input []u8) bool {
 	return key_com_start(input, `i`)
 }
 
-fn basic_end_37(input []byte) bool {
+fn basic_end_37(input []u8) bool {
 	return key_com_end(input, 2, 'f')
 }
 
 // in
-fn basic_start_38(input []byte) bool {
+fn basic_start_38(input []u8) bool {
 	return key_com_start(input, `i`)
 }
 
-fn basic_end_38(input []byte) bool {
+fn basic_end_38(input []u8) bool {
 	return key_com_end(input, 2, 'n')
 }
 
 // interface
-fn basic_start_39(input []byte) bool {
+fn basic_start_39(input []u8) bool {
 	return key_com_start(input, `i`)
 }
 
-fn basic_end_39(input []byte) bool {
+fn basic_end_39(input []u8) bool {
 	return key_com_end(input, 9, 'nterface')
 }
 
 // is
-fn basic_start_40(input []byte) bool {
+fn basic_start_40(input []u8) bool {
 	return key_com_start(input, `i`)
 }
 
-fn basic_end_40(input []byte) bool {
+fn basic_end_40(input []u8) bool {
 	return key_com_end(input, 2, 's')
 }
 
 // lock
-fn basic_start_41(input []byte) bool {
+fn basic_start_41(input []u8) bool {
 	return key_com_start(input, `l`)
 }
 
-fn basic_end_41(input []byte) bool {
+fn basic_end_41(input []u8) bool {
 	return key_com_end(input, 4, 'ock')
 }
 
 // match
-fn basic_start_42(input []byte) bool {
+fn basic_start_42(input []u8) bool {
 	return key_com_start(input, `m`)
 }
 
-fn basic_end_42(input []byte) bool {
+fn basic_end_42(input []u8) bool {
 	return key_com_end(input, 5, 'atch')
 }
 
 // mut
-fn basic_start_43(input []byte) bool {
+fn basic_start_43(input []u8) bool {
 	return key_com_start(input, `m`)
 }
 
-fn basic_end_43(input []byte) bool {
+fn basic_end_43(input []u8) bool {
 	return key_com_end(input, 3, 'ut')
 }
 
 // none
-fn basic_start_44(input []byte) bool {
+fn basic_start_44(input []u8) bool {
 	return key_com_start(input, `n`)
 }
 
-fn basic_end_44(input []byte) bool {
+fn basic_end_44(input []u8) bool {
 	return key_com_end(input, 4, 'one')
 }
 
 // or
-fn basic_start_45(input []byte) bool {
+fn basic_start_45(input []u8) bool {
 	return key_com_start(input, `o`)
 }
 
-fn basic_end_45(input []byte) bool {
+fn basic_end_45(input []u8) bool {
 	return key_com_end(input, 2, 'r')
 }
 
 // return
-fn basic_start_46(input []byte) bool {
+fn basic_start_46(input []u8) bool {
 	return key_com_start(input, `r`)
 }
 
-fn basic_end_46(input []byte) bool {
+fn basic_end_46(input []u8) bool {
 	return key_com_end(input, 6, 'eturn')
 }
 
 // rlock
-fn basic_start_47(input []byte) bool {
+fn basic_start_47(input []u8) bool {
 	return key_com_start(input, `r`)
 }
 
-fn basic_end_47(input []byte) bool {
+fn basic_end_47(input []u8) bool {
 	return key_com_end(input, 5, 'lock')
 }
 
 // select
-fn basic_start_48(input []byte) bool {
+fn basic_start_48(input []u8) bool {
 	return key_com_start(input, `s`)
 }
 
-fn basic_end_48(input []byte) bool {
+fn basic_end_48(input []u8) bool {
 	return key_com_end(input, 6, 'elect')
 }
 
 // shared
-fn basic_start_49(input []byte) bool {
+fn basic_start_49(input []u8) bool {
 	return key_com_start(input, `s`)
 }
 
-fn basic_end_49(input []byte) bool {
+fn basic_end_49(input []u8) bool {
 	return key_com_end(input, 6, 'hared')
 }
 
 // sizeof
-fn basic_start_50(input []byte) bool {
+fn basic_start_50(input []u8) bool {
 	return key_com_start(input, `s`)
 }
 
-fn basic_end_50(input []byte) bool {
+fn basic_end_50(input []u8) bool {
 	return key_com_end(input, 6, 'izeof')
 }
 
 // static
-fn basic_start_51(input []byte) bool {
+fn basic_start_51(input []u8) bool {
 	return key_com_start(input, `s`)
 }
 
-fn basic_end_51(input []byte) bool {
+fn basic_end_51(input []u8) bool {
 	return key_com_end(input, 6, 'tatic')
 }
 
 // thread
-fn basic_start_52(input []byte) bool {
+fn basic_start_52(input []u8) bool {
 	return key_com_start(input, `t`)
 }
 
-fn basic_end_52(input []byte) bool {
+fn basic_end_52(input []u8) bool {
 	return key_com_end(input, 6, 'hread')
 }
 
 // true
-fn basic_start_53(input []byte) bool {
+fn basic_start_53(input []u8) bool {
 	return key_com_start(input, `t`)
 }
 
-fn basic_end_53(input []byte) bool {
+fn basic_end_53(input []u8) bool {
 	return key_com_end(input, 4, 'rue')
 }
 
 // type
-fn basic_start_54(input []byte) bool {
+fn basic_start_54(input []u8) bool {
 	return key_com_start(input, `t`)
 }
 
-fn basic_end_54(input []byte) bool {
+fn basic_end_54(input []u8) bool {
 	return key_com_end(input, 4, 'ype')
 }
 
 // typeof
-fn basic_start_55(input []byte) bool {
+fn basic_start_55(input []u8) bool {
 	return key_com_start(input, `t`)
 }
 
-fn basic_end_55(input []byte) bool {
+fn basic_end_55(input []u8) bool {
 	return key_com_end(input, 6, 'ypeof')
 }
 
 // volatile
-fn basic_start_56(input []byte) bool {
+fn basic_start_56(input []u8) bool {
 	return key_com_start(input, `v`)
 }
 
-fn basic_end_56(input []byte) bool {
+fn basic_end_56(input []u8) bool {
 	return key_com_end(input, 8, 'olatile')
 }
 
 // union
-fn basic_start_57(input []byte) bool {
+fn basic_start_57(input []u8) bool {
 	return key_com_start(input, `u`)
 }
 
-fn basic_end_57(input []byte) bool {
+fn basic_end_57(input []u8) bool {
 	return key_com_end(input, 5, 'nion')
 }
 
 // unsafe
-fn basic_start_58(input []byte) bool {
+fn basic_start_58(input []u8) bool {
 	return key_com_start(input, `u`)
 }
 
-fn basic_end_58(input []byte) bool {
+fn basic_end_58(input []u8) bool {
 	return key_com_end(input, 6, 'nsafe')
 }
 
 //__offsetof
-fn basic_start_59(input []byte) bool {
+fn basic_start_59(input []u8) bool {
 	return key_com_start(input, `_`)
 }
 
-fn basic_end_59(input []byte) bool {
+fn basic_end_59(input []u8) bool {
 	return key_com_end(input, 10, '_offsetof')
 }
 
 //__global
-fn basic_start_60(input []byte) bool {
+fn basic_start_60(input []u8) bool {
 	return key_com_start(input, `_`)
 }
 
-fn basic_end_60(input []byte) bool {
+fn basic_end_60(input []u8) bool {
 	return key_com_end(input, 8, '_global')
 }
 
 //<
-fn basic_start_61(input []byte) bool {
+fn basic_start_61(input []u8) bool {
 	return key_com_start(input, `<`)
 }
 
 //>
-fn basic_start_62(input []byte) bool {
+fn basic_start_62(input []u8) bool {
 	return key_com_start(input, `>`)
 }
 
 // rune
-fn basic_start_63(input []byte) bool {
+fn basic_start_63(input []u8) bool {
 	for i in input {
 		if i != `\`` { // 0x60
 			return false
@@ -1160,11 +1160,11 @@ fn basic_start_63(input []byte) bool {
 	return true
 }
 
-fn basic_end_63(input []byte) bool {
+fn basic_end_63(input []u8) bool {
 	return !basic_continue_string_com(input, `\``)
 }
 
-fn basic_continue_63(input []byte) bool {
+fn basic_continue_63(input []u8) bool {
 	return basic_continue_string_com(input, `\``)
 }
 

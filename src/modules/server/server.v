@@ -4,11 +4,14 @@ import jsonrpc
 import log
 import json
 import lsp
+import vlsio
 
 interface ReceiveSender {
 	debug bool
+	logger log.Logger
 	init() ?
-	send(data string)
+mut:
+	send(data string)?
 	receive() ?string
 }
 
@@ -33,16 +36,23 @@ mut:
 	capabilities lsp.ServerCapabilities
 	//符号db
 	symboldb Symboldb
-pub:
+pub mut:
 	// io流对象用于与客户端传递信息
 	io ReceiveSender
 }
 
-pub fn new(io ReceiveSender, loglv string, vexe string) Vls112 {
+pub fn new(debug_mode bool, loglv string, vexe string) Vls112 {
+	logger:= log.new_logger(debug_mode, loglv)
+
+	mut io := server.ReceiveSender(vlsio.Stdio{
+		debug: debug_mode
+		logger: logger
+	})
+
 	mut vls_112 := Vls112{
 		io: io
 		loglv: loglv
-		logger: log.new_logger(io.debug, loglv)
+		logger: logger
 		vexe: vexe
 	}
 
@@ -60,11 +70,13 @@ pub fn (mut ls Vls112) start_parse_loop() {
 
 	// Show message that VLS is not yet ready!
 	ls.show_message('VLS-112 is a work-in-progress `debug_mode:$ls.io.debug.str() loglv:$ls.loglv.str()`',
-		.info)
+		.info) or { ls.vls112_exit(1, err)}
 
 	for {
 		payload := ls.io.receive() or { continue }
-		ls.dispatch(payload) or { ls.vls112_exit(1, err) }
+		ls.dispatch(payload) or { 
+			ls.vls112_exit(1, err) 
+		}
 	}
 }
 
@@ -79,7 +91,8 @@ fn (mut ls Vls112) dispatch(payload string) ? {
 
 	if ls.status == .initialized {
 		match request.method {
-			'initialized' {}
+			'initialized' {
+			}
 			'shutdown' {
 				ls.shutdown(request.id)?
 			}

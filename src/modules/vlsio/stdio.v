@@ -1,6 +1,8 @@
 module vlsio
 
 import strings
+import log
+import os
 
 const (
 	content_length = 'Content-Length: '
@@ -9,18 +11,22 @@ const (
 fn C.fgetc(stream &C.FILE) int
 
 pub struct Stdio {
+mut:
+	stdout os.File = os.stdout()
 pub mut:
 	debug bool
+	logger log.Logger
 }
 
 pub fn (_ Stdio) init() ? {}
 
-pub fn (_ Stdio) send(output string) {
-	print('Content-Length: $output.len\r\n\r\n$output')
+pub fn (mut s Stdio) send(output string)? {
+	defer { s.stdout.flush() }
+	s.stdout.write('Content-Length: $output.len\r\n\r\n$output'.bytes())?
 }
 
-[manualfree]
-pub fn (_ Stdio) receive() ?string {
+//[manualfree]
+pub fn (mut s Stdio) receive() ?string {
 	first_line := get_raw_input()
 	if first_line.len < 1 || !first_line.starts_with(vlsio.content_length) {
 		return error('content length is missing')
@@ -34,17 +40,17 @@ pub fn (_ Stdio) receive() ?string {
 				continue
 			}
 		}
-		buf.write_byte(c)
+		buf.write_u8(u8(c))
 		conlen--
 	}
 	payload := buf.str()
-	unsafe { buf.free() }
+	//unsafe { buf.free() }
 	return payload[1..]
 }
 
 fn get_raw_input() string {
 	eof := C.EOF
-	mut buf := strings.new_builder(200)
+	mut buf := strings.new_builder(100)
 	for {
 		c := C.fgetc(&C.FILE(C.stdin))
 		chr := u8(c)

@@ -1,13 +1,13 @@
 module sym
 //符号规约
 
-pub const scan_end = byte(0b0)
+pub const scan_end = u8(0b0)
 
 //符号判断函数
 //input: basic_symbol,tier,scope_index_arr
 //output: flg symbol_step match_fn_step tier
 pub type FuncSymbolBool = fn(Symbol,int,mut []int)(bool,int,int,int)
-pub type FuncByteBool = fn([]byte)bool
+pub type FuncByteBool = fn([]u8)bool
 
 pub enum Symboltype{
 	//未被定义的
@@ -112,15 +112,15 @@ pub struct BasicSymbol{
 //基本符号匹配定义
 pub struct BasicSymbolDefine{
 	//匹配开始
-	is_start fn([]byte)bool [required]
+	is_start fn([]u8)bool [required]
 	//是否固定长度
 	is_fixed_length bool [required]
 	//固定长度
 	len int [required]
 	//可变长继续匹配函数
-	is_continue fn([]byte)bool [required]
+	is_continue fn([]u8)bool [required]
 	//匹配结束
-	is_end fn([]byte)bool [required]
+	is_end fn([]u8)bool [required]
 	//is_continue函数传入后续所有字符
 	continue_fn_input_all bool
 	//发生比正确匹配是是否跳过不输出undefined

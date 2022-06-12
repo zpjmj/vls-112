@@ -49,7 +49,7 @@ fn new_scanner(text string) Scanner {
 	}
 }
 
-fn (mut s Scanner) scan() ?[]byte {
+fn (mut s Scanner) scan() ?[]u8 {
 	s.prev_state.word_pos = s.word_pos
 	s.prev_state.byte_pos = s.byte_pos
 	s.prev_state.line = s.line
@@ -59,7 +59,7 @@ fn (mut s Scanner) scan() ?[]byte {
 
 	if s.byte_pos >= s.text.len {
 		s.is_end = true
-		return []byte{}
+		return []u8{}
 	}
 	return s.get_utf8_word()
 }
@@ -81,7 +81,7 @@ fn (mut s Scanner) get_utf8_word() ?[]u8 {
 	}
 
 	//获取先头1位和2位
-	first_bit := byte(str[pos] >> 7)
+	first_bit := u8(str[pos] >> 7)
 
 	//线头1位=0 ascii字符
 	if first_bit == 0b0 {
@@ -98,11 +98,11 @@ fn (mut s Scanner) get_utf8_word() ?[]u8 {
 	}
 
 	//获取多字节字的 123 1234 12345 位
-	bit_123 := byte(str[pos] >> 5)
-	bit_1234 := byte(str[pos] >> 4)
-	bit_12345 := byte(str[pos] >> 3)
+	bit_123 := u8(str[pos] >> 5)
+	bit_1234 := u8(str[pos] >> 4)
+	bit_12345 := u8(str[pos] >> 3)
 
-	mut word := []byte{}
+	mut word := []u8{}
 
 	//为2byte的utf8字时
 	if bit_123 == 0b00000110 {

@@ -3,13 +3,13 @@ import os
 
 param := os.args[1..]
 
-mut gc:=''
+mut gc:='-gc boehm '
 mut prod := ''
 
 if param.len > 0 {
 	if param[0] == '-prod' {
 		prod = '-prod '
-		gc = ''
+		gc = '-gc boehm '
 	}
 }
 

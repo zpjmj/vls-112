@@ -16,35 +16,35 @@ enum MessageType {
 	log = 4
 }
 
-fn (mut ls Vls112) notify<T>(data jsonrpc.NotificationMessage<T>) {
+fn (mut ls Vls112) notify<T>(data jsonrpc.NotificationMessage<T>)? {
 	str := json.encode(data)
 
 	// ls.logger.in
-	ls.io.send(str)
+	ls.io.send(str)?
 }
 
-fn (mut ls Vls112) show_message(m string, mlv MessageType) {
+fn (mut ls Vls112) show_message(m string, mlv MessageType)? {
 	ls.notify(jsonrpc.NotificationMessage<ShowMessageParams>{
 		method: 'window/showMessage'
 		params: ShowMessageParams{
 			@type: mlv
 			message: m
 		}
-	})
+	})?
 }
 
 fn (mut ls Vls112) send<T>(resp jsonrpc.Response<T>) ? {
 	str := resp.json()
 	ls.logger.info('new response -->', 1)?
 	ls.logger.text(str, 1, '\t')?
-	ls.io.send(str)
+	ls.io.send(str)?
 }
 
 fn (mut ls Vls112) send_null(id string) ? {
 	str := '{"jsonrpc":"$jsonrpc.version","id":$id,"result":null}'
 	ls.logger.info('new response -->', 1)?
 	ls.logger.text(str, 1, '\t')?
-	ls.io.send(str)
+	ls.io.send(str)?
 }
 
 [inline]

@@ -146,7 +146,7 @@ fn (mut r Runtime) parse_basic_symbol__() ? {
 					scanner.clean_stack()
 					if basic_symbol_define.is_fixed_length {
 						if basic_symbol_define.len > 1 {
-							mut after_word := []byte{}
+							mut after_word := []u8{}
 							scanner.pushd()
 							for i := 1; i < basic_symbol_define.len + 1; i++ {
 								next_word := scanner.scan()?
@@ -214,7 +214,7 @@ fn (mut r Runtime) parse_basic_symbol__() ? {
 						}
 						goto next
 					} else {
-						mut after_word := []byte{}
+						mut after_word := []u8{}
 						scanner.pushd()
 						for {
 							next_word := scanner.scan()?
